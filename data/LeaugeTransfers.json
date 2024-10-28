@@ -1,0 +1,141 @@
+[
+    {
+        "user_team_name": "Garnachochips",
+        "user_full_name": "Marius Vik Tvedte",
+        "user_transfer_result": 2,
+        "event_transfers": 1,
+        "event_transfers_cost": 0,
+        "transfers": [
+            {
+                "element_in": 307,
+                "element_in_cost": 64,
+                "element_out": 506,
+                "element_out_cost": 56,
+                "entry": 2814441,
+                "event": 33,
+                "time": "2024-04-12T17:30:32.319027Z",
+                "element_in_web_name": "Robertson",
+                "element_out_web_name": "Pedro Porro",
+                "element_in_point": 2,
+                "element_out_point": 0,
+                "pointDifference": 2,
+                "element_in_id": 307,
+                "element_out_id": 506,
+                "element_in_photo": "122798.jpg",
+                "element_out_photo": "441164.jpg"
+            }
+        ],
+        "totalTransferResult": 2
+    },
+    {
+        "user_team_name": "Månefisken",
+        "user_full_name": "Erik Beskow",
+        "user_transfer_result": 0,
+        "event_transfers": 0,
+        "event_transfers_cost": 0,
+        "transfers": [],
+        "totalTransferResult": 0
+    },
+    {
+        "user_team_name": "Rooney Tunes",
+        "user_full_name": "Marius Veum",
+        "user_transfer_result": 0,
+        "event_transfers": 0,
+        "event_transfers_cost": 0,
+        "transfers": [],
+        "totalTransferResult": 0
+    },
+    {
+        "user_team_name": "Darwin’s Theory",
+        "user_full_name": "Frederik Nygaard",
+        "user_transfer_result": -1,
+        "event_transfers": 1,
+        "event_transfers_cost": 0,
+        "transfers": [
+            {
+                "element_in": 260,
+                "element_in_cost": 46,
+                "element_out": 369,
+                "element_out_cost": 53,
+                "entry": 860459,
+                "event": 33,
+                "time": "2024-04-12T22:33:55.261351Z",
+                "element_in_web_name": "Mykolenko",
+                "element_out_web_name": "Walker",
+                "element_in_point": -1,
+                "element_out_point": 0,
+                "pointDifference": -1,
+                "element_in_id": 260,
+                "element_out_id": 369,
+                "element_in_photo": "224967.jpg",
+                "element_out_photo": "58621.jpg"
+            }
+        ],
+        "totalTransferResult": -1
+    },
+    {
+        "user_team_name": "ØiWin",
+        "user_full_name": "Øivind Sørdal",
+        "user_transfer_result": 2,
+        "event_transfers": 1,
+        "event_transfers_cost": 0,
+        "transfers": [
+            {
+                "element_in": 19,
+                "element_in_cost": 89,
+                "element_out": 526,
+                "element_out_cost": 78,
+                "entry": 4684878,
+                "event": 33,
+                "time": "2024-04-13T08:43:34.989939Z",
+                "element_in_web_name": "Saka",
+                "element_out_web_name": "Bowen",
+                "element_in_point": 2,
+                "element_out_point": 0,
+                "pointDifference": 2,
+                "element_in_id": 19,
+                "element_out_id": 526,
+                "element_in_photo": "223340.jpg",
+                "element_out_photo": "178186.jpg"
+            }
+        ],
+        "totalTransferResult": 2
+    },
+    {
+        "user_team_name": "Templateridder",
+        "user_full_name": "Espen Sævig",
+        "user_transfer_result": 2,
+        "event_transfers": 1,
+        "event_transfers_cost": 0,
+        "transfers": [
+            {
+                "element_in": 19,
+                "element_in_cost": 89,
+                "element_out": 526,
+                "element_out_cost": 78,
+                "entry": 7509611,
+                "event": 33,
+                "time": "2024-04-13T09:33:07.783341Z",
+                "element_in_web_name": "Saka",
+                "element_out_web_name": "Bowen",
+                "element_in_point": 2,
+                "element_out_point": 0,
+                "pointDifference": 2,
+                "element_in_id": 19,
+                "element_out_id": 526,
+                "element_in_photo": "223340.jpg",
+                "element_out_photo": "178186.jpg"
+            }
+        ],
+        "totalTransferResult": 2
+    },
+    {
+        "user_team_name": "IngenTro",
+        "user_full_name": "Sondre Myhre",
+        "user_transfer_result": 0,
+        "event_transfers": 0,
+        "event_transfers_cost": 0,
+        "transfers": [],
+        "totalTransferResult": 0
+    }
+]

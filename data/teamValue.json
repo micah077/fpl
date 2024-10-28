@@ -1,0 +1,60 @@
+[
+
+    {
+  
+        "userId": 860459,
+        "userName": "Frederik Nygaard",
+        "teamValue": 1049,
+        "trendValue": 1043,
+        "trend": 6,
+        "bank": 12
+    },
+    {
+        "userId": 301874,
+        "userName": "Erik Beskow",
+        "teamValue": 1045,
+        "trendValue": 1042,
+        "trend": 3,
+        "bank": 1
+    },
+    {
+        "userId": 2814441,
+        "userName": "Marius Vik Tvedte",
+        "teamValue": 1039,
+        "trendValue": 1040,
+        "trend": -1,
+        "bank": 10
+    },
+    {
+        "userId": 4684878,
+        "userName": "Øivind Sørdal",
+        "teamValue": 1039,
+        "trendValue": 1033,
+        "trend": 6,
+        "bank": 15
+    },
+    {
+        "userId": 436071,
+        "userName": "Sondre Myhre",
+        "teamValue": 1014,
+        "trendValue": 1021,
+        "trend": -7,
+        "bank": 13
+    },
+    {
+        "userId": 6625732,
+        "userName": "Marius Veum",
+        "teamValue": 1003,
+        "trendValue": 1005,
+        "trend": -2,
+        "bank": 1
+    },
+    {
+        "userId": 7509611,
+        "userName": "Espen Sævig",
+        "teamValue": 1003,
+        "trendValue": 1000,
+        "trend": 3,
+        "bank": 13
+    } 
+]

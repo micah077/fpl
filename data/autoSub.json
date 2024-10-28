@@ -1,0 +1,44 @@
+[
+    {
+        "userId": 301874,
+        "autoSubsPoints": 6,
+        "userName": "Erik Beskow",
+        "autoSubsPointsCurrentGw": 6
+    },
+    {
+        "userId": 6625732,
+        "autoSubsPoints": 2,
+        "userName": "Marius Veum",
+        "autoSubsPointsCurrentGw": 2
+    },
+    {
+        "userId": 4684878,
+        "autoSubsPoints": 2,
+        "userName": "Øivind Sørdal",
+        "autoSubsPointsCurrentGw": 2
+    },
+    {
+        "userId": 860459,
+        "autoSubsPoints": 1,
+        "userName": "Frederik Nygaard",
+        "autoSubsPointsCurrentGw": 1
+    },
+    {
+        "userId": 2814441,
+        "autoSubsPoints": 0,
+        "userName": "Marius Vik Tvedte",
+        "autoSubsPointsCurrentGw": 0
+    },
+    {
+        "userId": 436071,
+        "autoSubsPoints": 0,
+        "userName": "Sondre Myhre",
+        "autoSubsPointsCurrentGw": 0
+    },
+    {
+        "userId": 7509611,
+        "autoSubsPoints": -1,
+        "userName": "Espen Sævig",
+        "autoSubsPointsCurrentGw": -1
+    }
+]

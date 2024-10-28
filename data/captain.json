@@ -1,0 +1,36 @@
+[
+    {
+        "playerId": 362,
+        "playerName": "Palmer",
+        "timesPicked": 1,
+        "userIds": [ 4684878 ],
+        "userNames": [ "Øivind Sørdal" ],
+        "captainPoints": 26,
+        "captainPhoto": "https://resources.premierleague.com/premierleague/photos/players/250x250/p244851.png"
+    },
+    {
+        "playerId": 355,
+        "playerName": "Haaland",
+        "timesPicked": 5,
+        "userIds": [ 2814441, 301874, 6625732, 860459, 436071 ],
+        "userNames": [
+            "Marius Vik Tvedte",
+            "Erik Beskow",
+            "Marius Veum",
+            "Frederik Nygaard",
+            "Sondre Myhre"
+        ],
+        "captainPoints": 10,
+        "captainPhoto": "https://resources.premierleague.com/premierleague/photos/players/250x250/p223094.png"
+    },
+    {
+        "playerId": 14,
+        "playerName": "Ødegaard",
+        "timesPicked": 1,
+        "userIds": [ 7509611 ],
+        "userNames": [ "Espen Sævig" ],
+        "captainPoints": 3,
+        "captainPhoto": "https://resources.premierleague.com/premierleague/photos/players/250x250/p184029.png"
+    }
+  ]
+  
