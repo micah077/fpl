@@ -27,7 +27,6 @@ interface BonusScores {
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-
         const { leagueId } = req.query;
         if (!leagueId) {
             return res.status(400).json({ error: 'leagueId is required' });
@@ -87,10 +86,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 userGWdata.picks.map(pick => pick.element).includes(score.playerId)
             );
 
-            const playersStarted = userGWEvents.filter(event => 
-                event.explain[0].stats.some(stat => stat.identifier === 'minutes' && stat.value !== 0)
-            );
-            
+            const playersStarted = userGWEvents.filter(event => {
+                const userGWDataStarting = userGWdata.picks.filter(pick => 
+                    pick?.element === event.id && pick.position <= 11
+                );
+                
+                const minutes = event.explain[0].stats.find(stat => stat.identifier === 'minutes');
+                const fixtureStarted = gwBonusPoints.find(bonusPoint => bonusPoint?.fixtureId === event.explain[0].fixture);
+
+                return userGWDataStarting.length > 0 && fixtureStarted && minutes?.value !== 0;
+            });
+
             const numberOfPlayersStarted = playersStarted.length;
 
             return {
@@ -120,7 +126,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         return res.status(200).json(result);
 
-    } catch (error:any) {
+    } catch (error: any) {
         console.error('Unexpected error in handler:', error);
         return res.status(500).json({ error: `Unexpected error: ${error.message}` });
     }

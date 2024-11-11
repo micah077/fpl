@@ -1,20 +1,18 @@
+"use client"
 import Head from "next/head";
 import Image from "next/image";
 import { useState, ChangeEvent, FormEvent, useEffect, useRef } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { getManager } from "@/lib/utils/FPLFetch";
 import Popup from "@/components/Modals/Popup";
 import "@/app/globals.css";
 import { Manager } from "@/lib/types/Manager";
 import Welcome from "@/components/Welcome/Welcome"; // Ensure this is your new component
 
-import { Inter } from "next/font/google";
 import { MdClose, MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
 import LandingStats from "@/components/Landing-Stats/LandingStats"; // Ensure this is your new component
 import Footer from "@/components/Footer/Footer"; // Ensure this is your new component
 
-
-const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [userID, setUserID] = useState<string>("");
@@ -128,7 +126,7 @@ export default function Home() {
       .sort((a, b) => b.rank_count - a.rank_count) || [];
 
   return (
-    <div className={`${inter.className} relative`}>
+    <div className={`relative`}>
       <Head>
         <title>FPL League Insights</title>
         <meta
