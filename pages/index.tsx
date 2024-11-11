@@ -1,8 +1,7 @@
-"use client"
 import Head from "next/head";
 import Image from "next/image";
 import { useState, ChangeEvent, FormEvent, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { getManager } from "@/lib/utils/FPLFetch";
 import Popup from "@/components/Modals/Popup";
 import "@/app/globals.css";
