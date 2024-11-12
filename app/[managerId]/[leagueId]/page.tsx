@@ -59,18 +59,18 @@ const Page = async ({
               </div>
               <SquareAd imgUrl="/ad1.png" />
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* <MostOwnedPlayer leagueId={params.leagueId} isDiff={false} /> */}
-                {/* <MostOwnedPlayer leagueId={params.leagueId} isDiff={true} /> */}
+                <MostOwnedPlayer leagueId={params.leagueId} isDiff={false} />
+                <MostOwnedPlayer leagueId={params.leagueId} isDiff={true} />
               </div>
               <SquareAd imgUrl="/ad2.png" />
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-                {/* <LiveEvents leagueId={params.leagueId} /> */}
-                {/* <TeamValue leagueId={params.leagueId} /> */}
+                <LiveEvents leagueId={params.leagueId} />
+                <TeamValue leagueId={params.leagueId} />
               </div>
               <SquareAd imgUrl="/ad3.png" />
               <div className="flex flex-col lg:flex-row gap-4">
-                {/* <BenchAndAutoSub leagueId={params.leagueId} /> */}
-                {/* <Chips leagueId={params.leagueId} /> */}
+                <BenchAndAutoSub leagueId={params.leagueId} />
+                <Chips leagueId={params.leagueId} />
               </div>
             </div>
             <div className="w-full lg:w-[12%] flex-shrink-0 hidden lg:block">
