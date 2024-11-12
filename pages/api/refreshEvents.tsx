@@ -65,7 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         
         // get the current playerEvents from the database to see if something has changed, using getEvent API 
         // from app/pages/api/getEvent/[gw]
-        const response = await fetch(`http://localhost:3000/api/getEvent/${currentGameweek}`, { cache: 'no-store' });
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/getEvent/${currentGameweek}`, { cache: 'no-store' });
         
         const databaseEventData: EventDatabase[] = await response.json();
         
@@ -113,7 +113,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         
         // remove the events using the removeEvent API from app/pages/api/removeEvent
-        const removeData = await fetch('http://localhost:3000/api/removeEvent', {
+        const removeData = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/removeEvent`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -125,7 +125,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         
 
         // add the missing events to the databaseEventData using the setEvent API from app/pages/api/setEvent        
-        const insertData = await fetch('http://localhost:3000/api/setEvent', {
+        const insertData = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/setEvent`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const data = await insertData.json();
         
         // update the events in the databaseEventData using the updateEvent API from app/pages/api/updateEvent
-        const updateData = await fetch('http://localhost:3000/api/updateEvent', {
+        const updateData = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/updateEvent`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
