@@ -59,8 +59,8 @@ const Page = async ({
               </div>
               <SquareAd imgUrl="/ad1.png" />
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <MostOwnedPlayer leagueId={params.leagueId} isDiff={false} />
-                <MostOwnedPlayer leagueId={params.leagueId} isDiff={true} />
+                {/* <MostOwnedPlayer leagueId={params.leagueId} isDiff={false} /> */}
+                {/* <MostOwnedPlayer leagueId={params.leagueId} isDiff={true} /> */}
               </div>
               <SquareAd imgUrl="/ad2.png" />
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
