@@ -53,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // call the refreshEvents api, inclduing currentGameweek and userIds 
         const updatedDataWithPlayerData: EventDatabase[]  = [];
         try {
-            const updateData = await fetch('http://localhost:3000/api/refreshEvents', {
+            const updateData = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/refreshEvents`, {
                 method: 'POST',
                 cache: 'no-store',
                 headers: {
@@ -69,7 +69,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
         
         // now, get all data from the database api using the getEvent API from app/pages/api/getEvent/[gw]
-        const updatedData = await fetch(`http://localhost:3000/api/getEvent/${currentGameweek}`, { cache: 'no-store' });
+        const updatedData = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/getEvent/${currentGameweek}`, { cache: 'no-store' });
         const updatedDatabaseEventData: EventDatabase[] = await updatedData.json();
 
         
