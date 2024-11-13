@@ -16,9 +16,11 @@ interface TeamValueData {
   bank: number;
 }
 
-const TeamValue = ({ leagueId }: { leagueId: string}) => {
+const TeamValue = ({ leagueId }: { leagueId: string }) => {
   const [isModalOpen, setModalOpen] = useState(false); // State for modal visibility
   const [teamValueData, setTeamValueData] = useState<TeamValueData[]>([]); // State for team value data
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<boolean>(false);
 
   const openModal = () => {
     setModalOpen(true);
@@ -29,35 +31,42 @@ const TeamValue = ({ leagueId }: { leagueId: string}) => {
     document.body.style.overflow = "auto";
   }; // Function to close the modal
 
-  
+
 
 
   useEffect(() => {
-    const fetchData = async () => {
-      const BASE_URL =
-        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-      const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
-
-      try {
-        const res = await fetch(
-          `${NEXT_API_BASE_URL}/getTeamValue/${leagueId}`
-        );
-        const data: TeamValueData[] = await res.json();
-        setTeamValueData(data);
-      } catch (error) {
-        console.error("Error fetching value:", error);
-      } finally {
-        
-      }
-    };
+    if (leagueId) {
+      fetchData();
+    }
 
     fetchData();
   }, [leagueId]);
-  
+
+  const fetchData = async () => {
+    const BASE_URL =
+      process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
+
+    try {
+      setIsLoading(true)
+      setError(false)
+      const res = await fetch(
+        `${NEXT_API_BASE_URL}/getTeamValue/${leagueId}`
+      );
+      const data: TeamValueData[] = await res.json();
+      setTeamValueData(data);
+    } catch (error) {
+      console.error("Error fetching value:", error);
+      setError(true)
+    } finally {
+      setIsLoading(false)
+    }
+  };
+
 
   return (
     <div className="col-span-2">
-      <MainCard title={`Team Value`}>
+      <MainCard  error={error} loader={isLoading} onRefresh={()=>fetchData()} title={`Team Value`}>
         <div className="overflow-auto">
           <table className="w-full">
             <thead className="text-sm text-primary-gray">
@@ -75,31 +84,31 @@ const TeamValue = ({ leagueId }: { leagueId: string}) => {
 
             <tbody className="text-sm text-secondary-gray text-center font-medium">
               {teamValueData && (
-              Array.isArray(teamValueData) && teamValueData.slice(0, 7).map((player, index) => (
-                <tr
-                  className="border-b border-off-white relative"
-                  key={player.userId}
-                >
-                  <td className="px-4 py-2 text-left">{player.userName}</td>
-                  <td className="px-4 py-2">{player.teamValue/10}M</td>
-                  <td className="px-4 py-2">
-                  <div className="flex justify-center items-center gap-2">
-                      <span>{(player.teamValue - player.trendValue) / 10}M</span>
-                      {player.teamValue - player.trend < 0 ? (
-                        <FaLongArrowAltDown className="text-icon-red" />
-                      ) : (
-                        <FaLongArrowAltUp className="text-icon-green" />
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-4 py-2 flex justify-center items-center gap-2">
-                    <div className="flex justify-center items-center gap-2">
-                      <span>{player.bank / 10}M</span>
-                      <BsBank />
-                    </div>
-                  </td>
-                </tr>
-              )))}
+                Array.isArray(teamValueData) && teamValueData.slice(0, 7).map((player, index) => (
+                  <tr
+                    className="border-b border-off-white relative"
+                    key={player.userId}
+                  >
+                    <td className="px-4 py-2 text-left">{player.userName}</td>
+                    <td className="px-4 py-2">{player.teamValue / 10}M</td>
+                    <td className="px-4 py-2">
+                      <div className="flex justify-center items-center gap-2">
+                        <span>{(player.teamValue - player.trendValue) / 10}M</span>
+                        {player.teamValue - player.trend < 0 ? (
+                          <FaLongArrowAltDown className="text-icon-red" />
+                        ) : (
+                          <FaLongArrowAltUp className="text-icon-green" />
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2 flex justify-center items-center gap-2">
+                      <div className="flex justify-center items-center gap-2">
+                        <span>{player.bank / 10}M</span>
+                        <BsBank />
+                      </div>
+                    </td>
+                  </tr>
+                )))}
             </tbody>
           </table>
         </div>
@@ -119,11 +128,10 @@ const TeamValue = ({ leagueId }: { leagueId: string}) => {
       <Popup isOpen={isModalOpen} onClose={closeModal}>
         {/* Popup */}
         <div
-          className={`w-[90%] md:w-4/5 lg:w-1/2 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${
-            isModalOpen
-              ? "top-[50%] visible opacity-100"
-              : "top-[40%] invisible opacity-0"
-          } transition duration-500`}
+          className={`w-[90%] md:w-4/5 lg:w-1/2 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${isModalOpen
+            ? "top-[50%] visible opacity-100"
+            : "top-[40%] invisible opacity-0"
+            } transition duration-500`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Popup head */}
@@ -139,49 +147,49 @@ const TeamValue = ({ leagueId }: { leagueId: string}) => {
 
           {/* Popup content */}
           <div className="h-[85vh] overflow-auto">
-          <table className="w-full">
-            <thead className="text-sm text-primary-gray">
-              <tr className="shadow-primary">
-                <th className="px-4 py-2 border-r border-off-white text-left">
-                  Username
-                </th>
-                <th className="px-4 py-2 border-r border-off-white">
-                  Team Value
-                </th>
-                <th className="px-4 py-2 border-r border-off-white">Trend</th>
-                <th className="px-4 py-2">Bank</th>
-              </tr>
-            </thead>
-
-            <tbody className="text-sm text-secondary-gray text-center font-medium">
-              {
-              Array.isArray(teamValueData) && teamValueData.slice(0, 7).map((player, index) => (
-                <tr
-                  className="border-b border-off-white relative"
-                  key={player.userId}
-                >
-                  <td className="px-4 py-2 text-left">{player.userName}</td>
-                  <td className="px-4 py-2">{player.teamValue/10}M</td>
-                  <td className="px-4 py-2">
-                  <div className="flex justify-center items-center gap-2">
-                      <span>{(player.teamValue - player.trendValue) / 10}M</span>
-                      {player.teamValue - player.trend < 0 ? (
-                        <FaLongArrowAltDown className="text-icon-red" />
-                      ) : (
-                        <FaLongArrowAltUp className="text-icon-green" />
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-4 py-2 flex justify-center items-center gap-2">
-                    <div className="flex justify-center items-center gap-2">
-                      <span>{player.bank/10}M</span>
-                      <BsBank />
-                    </div>
-                  </td>
+            <table className="w-full">
+              <thead className="text-sm text-primary-gray">
+                <tr className="shadow-primary">
+                  <th className="px-4 py-2 border-r border-off-white text-left">
+                    Username
+                  </th>
+                  <th className="px-4 py-2 border-r border-off-white">
+                    Team Value
+                  </th>
+                  <th className="px-4 py-2 border-r border-off-white">Trend</th>
+                  <th className="px-4 py-2">Bank</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody className="text-sm text-secondary-gray text-center font-medium">
+                {
+                  Array.isArray(teamValueData) && teamValueData.slice(0, 7).map((player, index) => (
+                    <tr
+                      className="border-b border-off-white relative"
+                      key={player.userId}
+                    >
+                      <td className="px-4 py-2 text-left">{player.userName}</td>
+                      <td className="px-4 py-2">{player.teamValue / 10}M</td>
+                      <td className="px-4 py-2">
+                        <div className="flex justify-center items-center gap-2">
+                          <span>{(player.teamValue - player.trendValue) / 10}M</span>
+                          {player.teamValue - player.trend < 0 ? (
+                            <FaLongArrowAltDown className="text-icon-red" />
+                          ) : (
+                            <FaLongArrowAltUp className="text-icon-green" />
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-2 flex justify-center items-center gap-2">
+                        <div className="flex justify-center items-center gap-2">
+                          <span>{player.bank / 10}M</span>
+                          <BsBank />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
           </div>
           {/* Popup content */}
         </div>
