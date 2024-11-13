@@ -18,7 +18,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { data, error } = await supabase.from('Events')
         .select('*')
         .filter('gw', 'eq', gw); 
-console.log(data,'data')
     res.status(200).json(data);
     
   } catch (error) {

@@ -43,7 +43,6 @@ const TeamValue = ({ leagueId }: { leagueId: string}) => {
           `${NEXT_API_BASE_URL}/getTeamValue/${leagueId}`
         );
         const data: TeamValueData[] = await res.json();
-        
         setTeamValueData(data);
       } catch (error) {
         console.error("Error fetching value:", error);

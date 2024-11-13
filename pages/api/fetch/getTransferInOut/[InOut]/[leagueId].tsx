@@ -47,7 +47,7 @@ interface AccType {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    console.time("API RESPONSE");
+    console.time("API RESPONSE TRANSFER");
 
     const { leagueId, InOut } = req.query;
     const numberOfGameweeks = 3;
@@ -109,7 +109,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const transfers = InOut === 'In' ? transferedIn : transferedOut;
 
-    console.timeEnd("API RESPONSE");
+    console.timeEnd("API RESPONSE TRANSFER");
 
     return res.status(200).json(transfers);
   } catch (error:any) {
