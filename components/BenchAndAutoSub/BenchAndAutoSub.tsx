@@ -45,7 +45,8 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
   const [scrollLeft, setScrollLeft] = useState<number>(0);
   const [canScrollRight, setCanScrollRight] = useState<boolean>(false);
 
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<boolean>(false);
   const openModal = () => {
     setModalOpen(true);
     document.body.style.overflow = "hidden";
@@ -99,45 +100,50 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
 
   // Fetching data
   useEffect(() => {
-    const fetchData = async () => {
-      const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-      const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
-
-        try {
-          const res = await fetch(`${NEXT_API_BASE_URL}/getPoBAndAutoSub/${leagueId}`);
-          if (!res.ok) {
-            throw new Error(`Error fetching transfer stats: ${res.statusText}`);
-          }
-          const data: PoBAutoSubs[] = await res.json()
-          
-          setPoBAutoSub(data); // Update state with sorted data
-
-          // Create graph data
-          const graphData = data.map((item) => {
-            return {
-              name: item.player_name,
-              points_on_bench: item.pointsOnBench.reduce((acc, curr) => acc + curr.elementGWdata.total_points, 0),
-              auto_sub: item.autoSubs.reduce((acc, curr) => acc + curr.elementIn.elementGWdata.total_points , 0),
-              manager_id: item.userId
-            };
-          }); 
-          const sortedData = graphData.slice().sort((a, b) => b.points_on_bench - a.points_on_bench);
-
-
-          setGraphData(sortedData);
-
-        } catch (error) {
-          console.error("Error fetching transfer data:", error);
-        }
-
-      }
+    
   
     if (leagueId) {
       fetchData(); // Fetch data only if leagueId exists
     }
   }, [leagueId]); // Ensure the effect triggers only when leagueId changes
 
+  const fetchData = async () => {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
 
+      try {
+        setIsLoading(true)
+        setError(false)
+        const res = await fetch(`${NEXT_API_BASE_URL}/getPoBAndAutoSub/${leagueId}`);
+        if (!res.ok) {
+          throw new Error(`Error fetching transfer stats: ${res.statusText}`);
+        }
+        const data: PoBAutoSubs[] = await res.json()
+        
+        setPoBAutoSub(data); // Update state with sorted data
+
+        // Create graph data
+        const graphData = data.map((item) => {
+          return {
+            name: item.player_name,
+            points_on_bench: item.pointsOnBench.reduce((acc, curr) => acc + curr.elementGWdata.total_points, 0),
+            auto_sub: item.autoSubs.reduce((acc, curr) => acc + curr.elementIn.elementGWdata.total_points , 0),
+            manager_id: item.userId
+          };
+        }); 
+        const sortedData = graphData.slice().sort((a, b) => b.points_on_bench - a.points_on_bench);
+
+
+        setGraphData(sortedData);
+
+      } catch (error) {
+        console.error("Error fetching transfer data:", error);
+        setError(true)
+      }finally {
+        setIsLoading(false)
+      }
+
+    }
 
   // Create a copy of the data array and sort it in descending order based on point
 
@@ -219,7 +225,7 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
 
   return (
     <div className="w-full lg:w-3/4">
-      <MainCard title={`Point of bench and auto sub`}>
+      <MainCard  error={error} loader={isLoading} onRefresh={()=>fetchData()} title={`Point of bench and auto sub`}>
         <div className="flex-1 relative">
           <div className="w-full flex justify-center gap-3 mt-3">
             <div className="flex items-center gap-1">
