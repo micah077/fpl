@@ -1,3 +1,4 @@
+"use client";
 import WhiteCard from "@/components/Card/WhiteCard";
 import Header from "@/components/Header/Header";
 import {
@@ -20,19 +21,57 @@ import SquareAd from "@/components/Common/SquareAd";
 import LeagueTable from "@/components/LeagueTable/LeagueTable";
 import Footer from "@/components/Footer/Footer";
 import Head from "next/head";
+import { useEffect, useState } from "react";
+import Lottie from 'react-lottie';
+import { footballPerson } from "@/animations";
 
-const Page = async ({
+const defaultOptions = {
+  loop: true,
+  autoplay: true,
+  animationData: footballPerson,
+  rendererSettings: {
+    preserveAspectRatio: 'xMidYMid slice'
+  }
+};
+
+const Page = ({
   params,
 }: {
   params: { managerId: string; leagueId: string };
 }) => {
+  const [managerData, setManagerData] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState(true); 
 
+ 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setTimeout(async () => {
+          const data = await getManager(params.managerId);
+          setManagerData(data);
+          setIsLoading(false); 
+        }, 3000);
+      } catch (error) {
+        console.error(error, "error");
+        setIsLoading(false); 
+      }
+    };
 
-  const managerData = await getManager(params.managerId);
+    fetchData();
+  }, [params.managerId]);
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black/60 flex justify-center items-center">
+        <Lottie options={defaultOptions}
+          height={400}
+          width={400}
+        />
+      </div>
+    );
+  }
 
   return (
-
     <div className="min-h-screen flex flex-col">
       <Header managerData={managerData} leagueId={params.leagueId} />
       <Head>
@@ -41,14 +80,12 @@ const Page = async ({
           name="description"
           content="Gain insights into your FPL league's dynamics"
         />
-
       </Head>
-      {/* Main content area with flex-grow */}
+
       <link rel="icon" href="/Tab-logo.svg" type="image/svg+xml" />
       <div className="flex-grow">
         <div className="flex gap-4 relative -top-[160px] left-0 w-full px-4 md:px-8 pb-8">
           <div className="w-full lg:w-[88%] flex flex-col gap-8">
-            {/* All your sections */}
 
             <CaptainsView leagueId={params.leagueId} />
             <LeagueTable leagueId={params.leagueId} />
@@ -79,14 +116,11 @@ const Page = async ({
         </div>
       </div>
 
-      {/* Footer */}
       <div className="-top-[250px]">
         <Footer />
       </div>
     </div>
   );
 };
-
-
 
 export default Page;
