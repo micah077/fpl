@@ -48,8 +48,8 @@ const LeagueTable = ({ leagueId }: { leagueId: string }) => {
   const [isInfoModalOpen, setInfoModalOpen] = useState(false); // State for modal visibility
   const [leagueTableData, setLeagueTableData] = useState<LeagueTableData | null>(null); // State for league table data
   const [selectedManager, setSelectedManager] = useState<Result>(); // State for selected manager
-
-
+  const [loader,setLoader] = useState(false)
+  const [isError,setIsError] = useState(false)
 
   const openMoreModal = () => {
     setMoreModalOpen(true);
@@ -88,6 +88,8 @@ const LeagueTable = ({ leagueId }: { leagueId: string }) => {
     const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
 
     try {
+      setIsError(false)
+      setLoader(true)
       const res = await fetch(
         `${NEXT_API_BASE_URL}/getLiveTable/${leagueId}`
       );
@@ -96,8 +98,9 @@ const LeagueTable = ({ leagueId }: { leagueId: string }) => {
       setLeagueTableData(data);
     } catch (error) {
       console.error("Error fetching value:", error);
+      setIsError(true)
     } finally {
-
+      setLoader(false)
     }
   };
 
@@ -141,7 +144,7 @@ const LeagueTable = ({ leagueId }: { leagueId: string }) => {
 
   return (
     <div className="col-span-2">
-      <MainCard title={`Live League Table`}>
+      <MainCard error={isError} onRefresh={()=>fetchData()} loader={loader} title={`Live League Table`}>
         <div className="overflow-auto">
           <table className="w-full">
             <thead className="text-sm text-primary-gray">

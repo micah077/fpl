@@ -41,7 +41,7 @@ const Page = ({
 }) => {
   const [managerData, setManagerData] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true); 
-
+  
  
   useEffect(() => {
     const fetchData = async () => {
