@@ -39,9 +39,9 @@ interface chipData {
 }
 interface GraphData {
   [key: string]: {
-      name: string;
-      point: number;
-      status: string;
+    name: string;
+    point: number;
+    status: string;
   }[];
 }
 
@@ -69,8 +69,11 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
   const [selectedChip, setSelectedChip] = useState<string | "">(""); // State for selected chip
   const [graphData, setGraphData] = useState<GraphDataDisplay[]>([]);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<boolean>(false);
+
   const openModal = (chip: string) => {
-    
+
     const sortedData = chipData?.graphData[chip].sort((a, b) => b.point - a.point);
     setSelectedChip(chip);
     setGraphData(sortedData as GraphDataDisplay[]);
@@ -87,7 +90,7 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
   const calculateAveragePoints = (chipData: chipData, chip: string) => {
 
     // for free-hit or wildcard chip, calculate average of points of users who played the chip
-    if (chip === "freehit" || chip === "wildcard" || chip === "bboost")  {
+    if (chip === "freehit" || chip === "wildcard" || chip === "bboost") {
       const usersData = chipData?.userData[chip];
       const totalPoints = usersData?.reduce((acc, user) => acc + user?.userGW?.entry_history?.points, 0);
       return (totalPoints / usersData?.length).toFixed(1);
@@ -100,11 +103,11 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
 
       // get total points by getting total_points from PlayerGWData
       const totalPoints = usersData?.reduce((acc, user) => {
-        const playerGWDataPoints  = user?.playerGWData?.total_points as number;
+        const playerGWDataPoints = user?.playerGWData?.total_points as number;
         return acc + playerGWDataPoints;
       }, 0);
 
-      
+
       return (totalPoints / usersData?.length).toFixed(1);
     }
   }
@@ -113,45 +116,50 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
   // calculate average points of users who played the chip 
   const getChipImg = (chipData: chipData, chip: string) => {
     // if anybody has the selected chip activated this gw, update the image to chip + "-active"
-    const activatedThisGW = chipData?.graphData[chip]?.filter(user => user.status === "Current")?.length > 0 
+    const activatedThisGW = chipData?.graphData[chip]?.filter(user => user.status === "Current")?.length > 0
     if (activatedThisGW) {
       return "/" + chip + "-active.png"
     } else {
       return "/" + chip + ".png"
     }
   }
-    
 
 
-   // Fetching data
-   useEffect(() => {
-    const fetchData = async () => {
-    
-      const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-      const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
 
-        try {
-          const res = await fetch(`${NEXT_API_BASE_URL}/getChips/${leagueId}`);
-          if (!res.ok) {
-            throw new Error(`Error fetching transfer stats: ${res.statusText}`);
-          }
-          const data: chipData = await res.json()
-          setChipData(data);
+  // Fetching data
+  useEffect(() => {
 
-          
 
-        } catch (error) {
-          console.error("Error fetching transfer data:", error);
-        } finally {   
-          
-        } 
-
-      }
-  
     if (leagueId) {
       fetchData(); // Fetch data only if leagueId exists
     }
-  }, [leagueId]); // Ensure the effect triggers only when leagueId changes
+  }, [leagueId]);
+
+  const fetchData = async () => {
+   
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
+
+    try {
+      setIsLoading(true)
+      setError(false)
+      const res = await fetch(`${NEXT_API_BASE_URL}/getChips/${leagueId}`);
+      if (!res.ok) {
+        throw new Error(`Error fetching transfer stats: ${res.statusText}`);
+      }
+      const data: chipData = await res.json()
+      setChipData(data);
+
+
+
+    } catch (error) {
+      console.error("Error fetching transfer data:", error);
+      setError(true)
+    } finally {
+      setIsLoading(false)
+    }
+
+  }
 
   const chips = [
     {
@@ -186,7 +194,7 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
 
 
   // Create a copy of the data array and sort it in descending order based on point
-  
+
 
   const CustomLabel = (props: any) => {
     const { x, y, height, name, index } = props;
@@ -263,13 +271,13 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
 
   const updateScrollButtons = () => {
     if (divRef.current) {
-      
+
       const { scrollLeft, scrollWidth, clientWidth } = divRef.current;
 
       setScrollLeft(scrollLeft); // Update left scroll position
       //  setCanScrollRight(scrollLeft + clientWidth < scrollWidth); // Check if we can scroll right
-      if ( scrollWidth <= (scrollLeft + clientWidth) + 20 ) {
-        
+      if (scrollWidth <= (scrollLeft + clientWidth) + 20) {
+
         setCanScrollRight(false);
       } else {
         setCanScrollRight(true);
@@ -309,62 +317,61 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
 
   return (
     <div className="flex-1 flex-shrink-0">
-        <MainCard title={`Chips`}>
-          <div className="flex-1 p-3 grid grid-cols-1 justify-items-center gap-4">
-            {chips.map((chip) => (
-          <div
-            className="w-full px-3 py-2 rounded-md shadow-sm flex justify-between items-center gap-2"
-            key={chip.id}
-          >
-            <Image
-              src={getChipImg(chipData as chipData, chip.webidentifier)}
-              alt={chip.webidentifier || "chips"} 
-              width={60}
-              height={60}
+      <MainCard error={error} loader={isLoading} onRefresh={()=>fetchData()} title={`Chips`}>
+        <div className="flex-1 p-3 grid grid-cols-1 justify-items-center gap-4">
+          {chips.map((chip) => (
+            <div
+              className="w-full px-3 py-2 rounded-md shadow-sm flex justify-between items-center gap-2"
+              key={chip.id}
+            >
+              <Image
+                src={getChipImg(chipData as chipData, chip.webidentifier)}
+                alt={chip.webidentifier || "chips"}
+                width={60}
+                height={60}
 
-            />
+              />
 
-            <div className="flex-1">
-              <div className="flex justify-between items-center gap-1">
-            <h3 className="text-primary-gray font-medium">{chip.name}</h3>
-            <MdInfoOutline
-              className={`text-lg ${chipData?.userData[chip.webidentifier]?.filter(userChip => userChip.userGW.entry_history.event === chipData?.gw).length ? "text-icon-green cursor-pointer" : "text-secondary-gray"}`}
-              onClick={() => {
-                if ((chipData && ((chipData?.userData[chip.webidentifier]?.length) / (chipData?.userIds?.length))*100 || 0) > 0) {
-                  openModal(chip.webidentifier);
-                }
-              }}
-            />
+              <div className="flex-1">
+                <div className="flex justify-between items-center gap-1">
+                  <h3 className="text-primary-gray font-medium">{chip.name}</h3>
+                  <MdInfoOutline
+                    className={`text-lg ${chipData?.userData[chip.webidentifier]?.filter(userChip => userChip.userGW.entry_history.event === chipData?.gw).length ? "text-icon-green cursor-pointer" : "text-secondary-gray"}`}
+                    onClick={() => {
+                      if ((chipData && ((chipData?.userData[chip.webidentifier]?.length) / (chipData?.userIds?.length)) * 100 || 0) > 0) {
+                        openModal(chip.webidentifier);
+                      }
+                    }}
+                  />
+                </div>
+                <div className="flex justify-between items-center gap-3">
+                  <div className="flex items-center gap-1 text-sm">
+                    <FaUsers className="flex-shrink-0 text-secondary-gray" />
+                    <p className="text-[#474747] font-medium">{(chipData?.userData[chip.webidentifier]?.filter(userChip => userChip.userGW.entry_history.event === chipData?.gw).length || 0).toFixed(0)} </p>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm">
+                    <FaUsersRectangle className="flex-shrink-0 text-secondary-gray" />
+                    <p className="text-[#474747] font-medium">{(chipData && ((chipData?.userData[chip.webidentifier]?.length) / (chipData?.userIds?.length)) * 100 || 0).toFixed(0)} %</p>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm">
+                    <FaBullseye className="flex-shrink-0 text-secondary-gray" />
+                    <p className="text-[#474747] font-medium">{calculateAveragePoints(chipData as chipData, chip.webidentifier)}</p>
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-between items-center gap-3">
-            <div className="flex items-center gap-1 text-sm">
-              <FaUsers className="flex-shrink-0 text-secondary-gray" />
-              <p className="text-[#474747] font-medium">{(chipData?.userData[chip.webidentifier]?.filter(userChip => userChip.userGW.entry_history.event === chipData?.gw).length  || 0).toFixed(0)} </p>
             </div>
-            <div className="flex items-center gap-1 text-sm">
-              <FaUsersRectangle className="flex-shrink-0 text-secondary-gray" />
-              <p className="text-[#474747] font-medium">{(chipData && ((chipData?.userData[chip.webidentifier]?.length) / (chipData?.userIds?.length))*100 || 0).toFixed(0)} %</p>
-            </div>
-            <div className="flex items-center gap-1 text-sm">
-              <FaBullseye className="flex-shrink-0 text-secondary-gray" />
-              <p className="text-[#474747] font-medium">{calculateAveragePoints(chipData as chipData,chip.webidentifier)}</p>
-            </div>
-              </div>
-            </div>
-          </div>
-            ))}
-          </div>
-        </MainCard>
+          ))}
+        </div>
+      </MainCard>
 
-        {/* Modal Component */}
+      {/* Modal Component */}
       <Popup isOpen={isModalOpen} onClose={closeModal}>
         {/* Popup */}
         <div
-          className={`w-[90%] md:w-3/5 lg:w-2/5 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${
-            isModalOpen
+          className={`w-[90%] md:w-3/5 lg:w-2/5 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${isModalOpen
               ? "top-[50%] visible opacity-100"
               : "top-[40%] invisible opacity-0"
-          } transition duration-500`}
+            } transition duration-500`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Popup head */}
@@ -373,7 +380,7 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
               "h-20 py-3 px-4 rounded-t-lg bg-third-gradient bg-no-repeat bg-right text-primary-gray font-bold flex justify-between"
             }
           >
-            <h2 >{findChip(selectedChip as string)?.name }</h2>
+            <h2 >{findChip(selectedChip as string)?.name}</h2>
             <MdClose className="text-xl cursor-pointer" onClick={closeModal} />
           </div>
           {/* Popup head */}
@@ -389,7 +396,7 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
                   </div>
                   <p className="flex flex-col items-center md:items-start">
                     <span className="text-[#474747] font-medium">
-                    {(chipData?.userData[selectedChip]?.filter(userChip => userChip.userGW.entry_history.event === chipData?.gw).length  || 0).toFixed(0)} 
+                      {(chipData?.userData[selectedChip]?.filter(userChip => userChip.userGW.entry_history.event === chipData?.gw).length || 0).toFixed(0)}
                     </span>
                     <span className="text-[#7e7e7e] text-xs font-medium">
                       GW activated chip
@@ -401,7 +408,7 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
                     <PeopleAltOutlinedIcon />
                   </div>
                   <p className="flex flex-col items-center md:items-start">
-                    <span className="text-[#474747] font-medium">{(chipData && ((chipData?.userData[selectedChip]?.length) / (chipData?.userIds?.length))*100 || 0).toFixed(0)} %</span>
+                    <span className="text-[#474747] font-medium">{(chipData && ((chipData?.userData[selectedChip]?.length) / (chipData?.userIds?.length)) * 100 || 0).toFixed(0)} %</span>
                     <span className="text-[#7e7e7e] text-xs font-medium">
                       in league used chip
                     </span>
@@ -426,87 +433,87 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
               {
                 graphData && (
 
-              <div>
-                <div className="w-full flex justify-center gap-3 pt-10">
-                  <div className="flex items-center gap-1">
-                    <RiRectangleFill className="text-sm text-[#FFC107]" />
-                    <p className="text-sm text-secondary-gray">Played earlier</p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <RiRectangleFill className="text-sm text-[#8FED80]" />
-                    <p className="text-sm text-secondary-gray">Activated this GW</p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <RiRectangleFill className="text-sm text-[#c0c0c2]" />
-                    <p className="text-sm text-secondary-gray">No</p>
-                  </div>
-                </div>
+                  <div>
+                    <div className="w-full flex justify-center gap-3 pt-10">
+                      <div className="flex items-center gap-1">
+                        <RiRectangleFill className="text-sm text-[#FFC107]" />
+                        <p className="text-sm text-secondary-gray">Played earlier</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <RiRectangleFill className="text-sm text-[#8FED80]" />
+                        <p className="text-sm text-secondary-gray">Activated this GW</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <RiRectangleFill className="text-sm text-[#c0c0c2]" />
+                        <p className="text-sm text-secondary-gray">No</p>
+                      </div>
+                    </div>
 
-                {scrollLeft > 0 && (
-                <button
-                  onClick={handlePrevClick}
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 p-2 rounded-full shadow-primary"
-                  style={{ background: "rgba(0, 0, 0, 0.15)" }}
-                >
-                  <FaArrowLeft className="text-lg text-primary-gray" />
-                </button>
-              )}
+                    {scrollLeft > 0 && (
+                      <button
+                        onClick={handlePrevClick}
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 p-2 rounded-full shadow-primary"
+                        style={{ background: "rgba(0, 0, 0, 0.15)" }}
+                      >
+                        <FaArrowLeft className="text-lg text-primary-gray" />
+                      </button>
+                    )}
 
-                <div className="w-full p-2 overflow-hidden" ref={divRef}>
-                  
-                  <BarChart
-                    width={chartDimensions.width}
-                    height={chartDimensions.height}
-                    data={graphData}
-                    barSize={14}
-                    margin={{
-                      top: 30,
-                      right: 10,
-                      left: 10,
-                      bottom: 5,
-                    }}
-                  >
-                    <Tooltip cursor={false} content={<CustomTooltip />} />
-                    <Bar
-                      dataKey="point"
-                      radius={[10, 10, 0, 0]}
-                      isAnimationActive={true}
-                      animationDuration={500}
-                      onMouseLeave={handleMouseOut}
-                    >
-                      {graphData.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={getColor(entry.status)}
-                          opacity={
-                            activeIndex === null || activeIndex === index
-                              ? 1
-                              : 0.3
-                          }
-                          onMouseOver={() => handleMouseOver(index)}
-                        />
-                      ))}
-                      <LabelList dataKey="point" position="top" />
-                      <LabelList content={<CustomLabel />} />
-                    </Bar>
-                  </BarChart>
-                </div>
-                {canScrollRight && (
-                <button
-                  onClick={handleNextClick}
-                  className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 p-2 rounded-full shadow-primary"
-                  style={{ background: "rgba(0, 0, 0, 0.15)" }}
-                >
-                  <FaArrowRight className="text-lg text-primary-gray" />
-                </button>
-              )}
-              </div>
-              )}  
-            {/* Content body */}
+                    <div className="w-full p-2 overflow-hidden" ref={divRef}>
+
+                      <BarChart
+                        width={chartDimensions.width}
+                        height={chartDimensions.height}
+                        data={graphData}
+                        barSize={14}
+                        margin={{
+                          top: 30,
+                          right: 10,
+                          left: 10,
+                          bottom: 5,
+                        }}
+                      >
+                        <Tooltip cursor={false} content={<CustomTooltip />} />
+                        <Bar
+                          dataKey="point"
+                          radius={[10, 10, 0, 0]}
+                          isAnimationActive={true}
+                          animationDuration={500}
+                          onMouseLeave={handleMouseOut}
+                        >
+                          {graphData.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={getColor(entry.status)}
+                              opacity={
+                                activeIndex === null || activeIndex === index
+                                  ? 1
+                                  : 0.3
+                              }
+                              onMouseOver={() => handleMouseOver(index)}
+                            />
+                          ))}
+                          <LabelList dataKey="point" position="top" />
+                          <LabelList content={<CustomLabel />} />
+                        </Bar>
+                      </BarChart>
+                    </div>
+                    {canScrollRight && (
+                      <button
+                        onClick={handleNextClick}
+                        className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 p-2 rounded-full shadow-primary"
+                        style={{ background: "rgba(0, 0, 0, 0.15)" }}
+                      >
+                        <FaArrowRight className="text-lg text-primary-gray" />
+                      </button>
+                    )}
+                  </div>
+                )}
+              {/* Content body */}
+            </div>
+
+            {/* Popup content */}
           </div>
-          
-          {/* Popup content */}
-        </div>
         </div>
         {/* Popup */}
       </Popup>

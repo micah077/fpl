@@ -61,8 +61,8 @@ const MainCard: FC<PopupProps> = ({ title, children, loader, onRefresh, error })
 
         <div className="flex items-center justify-center py-10">
           <Lottie options={defaultErrorOptions}
-            height={150}
-            width={150}
+            height={200}
+            width={200}
           />
         </div>
         :

@@ -86,12 +86,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const usersGWData = [] as UserGw[];
         await Promise.all(userIds.map(async (userId) => {
             for (let gw = 1; gw <= (currentGameweek || 3); gw++) {
-
-                
-                const userGWData = await getUserGWData(userId, gw);
-                userGWData.userId = userId;
-                
-                usersGWData.push(userGWData);
+                try {
+                    const userGWData = await getUserGWData(userId, gw);
+                    userGWData.userId = userId;
+                    usersGWData.push(userGWData);
+                } catch (error) {
+                    console.error(`Skipping user ID ${userId} for gameweek ${gw} due to error:`, error);
+                    // Optionally, you can store the error or add fallback data here, if needed
+                }
             }
         }));
                 
