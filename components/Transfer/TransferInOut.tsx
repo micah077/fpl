@@ -26,7 +26,7 @@ const TransferInOut = ({
   inOut: string;
 }) => {
   const [transfers, setTransfers] = useState<Transfers>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<number | null>(null);
   const [isFromMoreModal, setFromMoreModal] = useState(false);

@@ -19,7 +19,7 @@ type MostOwnedPlayer = {
   ownedPlayers: FPLResult[];
 };
 
-type MostOwnedPlayerType = { 
+type MostOwnedPlayerType = {
   leagueData: FPLLeague,
   mostOwnedPlayers: MostOwnedPlayer[],
   gw: number
@@ -33,32 +33,37 @@ const MostOwnedPlayer = ({ leagueId, isDiff }: { leagueId: string, isDiff: boole
   const [mostOwnedPlayers, setMostOwnedPlayers] = useState<MostOwnedPlayerType>();
   const [playerData, setPlayerData] = useState<Element>();
   const [ownedUsers, setownedUsers] = useState<FPLResult[]>();
-  
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-      const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
-  
-      if (!mostOwnedPlayers ) {
-        try {
-          const res = await fetch(`${NEXT_API_BASE_URL}/getMostOwnedPlayer/${leagueId}`);
-          if (!res.ok) {
-            throw new Error(`Error fetching most owned player: ${res.statusText}`);
-          }
-          const data: MostOwnedPlayerType = await res.json();
-          setMostOwnedPlayers(data); // Update state with fetched data
-        } catch (error) {
-          console.error("Error fetching most owned player:", error);
-        }
-      }
-    }   
+
     if (leagueId) {
       fetchData(); // Fetch data only if leagueId is valid
     }
   }, [leagueId]); // Ensure the effect runs only when leagueId changes
-  
 
+  const fetchData = async () => {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
+
+    try {
+      setIsLoading(true)
+      setError(false)
+      const res = await fetch(`${NEXT_API_BASE_URL}/getMostOwnedPlayer/${leagueId}`);
+      if (!res.ok) {
+        throw new Error(`Error fetching most owned player: ${res.statusText}`);
+      }
+      const data: MostOwnedPlayerType = await res.json();
+      setMostOwnedPlayers(data); // Update state with fetched data
+    } catch (error) {
+      console.error("Error fetching most owned player:", error);
+      setError(true)
+
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const openModal = (currentPlayerData: Element, ownedPlayers: FPLResult[]) => {
     setModalOpen(true);
@@ -113,7 +118,7 @@ const MostOwnedPlayer = ({ leagueId, isDiff }: { leagueId: string, isDiff: boole
   return (
     <>
       {/* Main content */}
-      <MainCard title={isDiff ? "Most Owned Differential" : "Most Owned Player"}>
+      <MainCard error={error} loader={isLoading} onRefresh={() => fetchData()} title={isDiff ? "Most Owned Differential" : "Most Owned Player"}>
         <div className="overflow-auto">
           <table className="w-full">
             <thead className="text-sm text-primary-gray">
@@ -159,13 +164,13 @@ const MostOwnedPlayer = ({ leagueId, isDiff }: { leagueId: string, isDiff: boole
                       <td className="px-4 py-2">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full relative">
-                          <Image
-                            src={getImageLink(player.currentPlayerData.photo) || "/player-loading.png"}
-                            alt={player.currentPlayerData.web_name || "Img of Player"}
-                            height={40}
-                            width={40}
-                            className="w-10 h-10 object-cover rounded-full max-w-max" // Add this class
-                          />
+                            <Image
+                              src={getImageLink(player.currentPlayerData.photo) || "/player-loading.png"}
+                              alt={player.currentPlayerData.web_name || "Img of Player"}
+                              height={40}
+                              width={40}
+                              className="w-10 h-10 object-cover rounded-full max-w-max" // Add this class
+                            />
 
                           </div>
                           <span className="text-left">
@@ -218,18 +223,17 @@ const MostOwnedPlayer = ({ leagueId, isDiff }: { leagueId: string, isDiff: boole
           <PlayerDetail
             isOpen={isMoreModalOpen}
             onClose={() => setFromMoreModal(false)}
-            playerData={playerData as Element} 
+            playerData={playerData as Element}
             ownedUsers={ownedUsers as FPLResult[]}
             gw={mostOwnedPlayers?.gw as number}
-            
+
           />
         ) : (
           <div
-            className={`w-[90%] md:w-4/5 lg:w-1/2 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[500] bg-white shadow-lg rounded-lg overflow-hidden ${
-              isMoreModalOpen
+            className={`w-[90%] md:w-4/5 lg:w-1/2 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[500] bg-white shadow-lg rounded-lg overflow-hidden ${isMoreModalOpen
                 ? "top-[50%] visible opacity-100"
                 : "top-[40%] invisible opacity-0"
-            } transition duration-500`}
+              } transition duration-500`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Popup head */}
@@ -295,20 +299,20 @@ const MostOwnedPlayer = ({ leagueId, isDiff }: { leagueId: string, isDiff: boole
                         </td>
                         <td className="px-4 py-2">
                           <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full">
-                          <Image
-                            src={
-                              getImageLink(
-                                player.currentPlayerData.photo
-                              ) || "/player-loading.png"
-                            }
-                            alt={player.currentPlayerData.web_name || "Img of Player"}
-                            height={40}
-                            width={40}
+                            <div className="w-10 h-10 rounded-full">
+                              <Image
+                                src={
+                                  getImageLink(
+                                    player.currentPlayerData.photo
+                                  ) || "/player-loading.png"
+                                }
+                                alt={player.currentPlayerData.web_name || "Img of Player"}
+                                height={40}
+                                width={40}
 
-                          />
+                              />
 
-                          </div>
+                            </div>
                             <span className="text-left">
                               {player.currentPlayerData.first_name}{" "}
                               {player.currentPlayerData.second_name}{" "}
