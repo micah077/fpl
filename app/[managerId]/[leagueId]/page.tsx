@@ -56,31 +56,26 @@ const Page = ({
     }
   };
 
+  const fetchData = async () => {
+    try {
+      document.body.classList.add("hide-scrollbar");
+      setTimeout(async () => {
+        const data = await fetchManager(params.managerId);
+        document.body.classList.remove("hide-scrollbar");
+        setManagerData(data);
+        setIsLoading(false); // Hide loader after 3 seconds
+      }, 3000);
+
+    } catch (error) {
+      console.error(error, "error");
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setTimeout(async () => {
-          const data = await fetchManager(params.managerId);
-          setManagerData(data);
-          setIsLoading(false); // Hide loader after 3 seconds
-        }, 3000);
-      } catch (error) {
-        console.error(error, "error");
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
   }, [params.managerId, params.leagueId]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-black/60 flex justify-center items-center">
-        <Lottie options={defaultOptions} height={400} width={400} />
-      </div>
-    );
-  }
 
 
   return (
@@ -94,7 +89,7 @@ const Page = ({
       <link rel="icon" href="/Tab-logo.svg" type="image/svg+xml" />
       <div className="flex-grow">
         <div className="flex gap-4 relative -top-[160px] left-0 w-full px-4 md:px-8 pb-8">
-          <div className="w-full lg:w-[88%] flex flex-col gap-8">
+          <div className="w-full z-1 lg:w-[88%] flex flex-col gap-8">
             <CaptainsView leagueId={params.leagueId} />
             <LeagueTable leagueId={params.leagueId} />
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -124,9 +119,13 @@ const Page = ({
         </div>
       </div>
 
-      <div className="-top-[250px]">
+      <div className="top-[250px]">
         <Footer />
       </div>
+      {isLoading && <div className="absolute w-screen z-10 top-0 h-full bg-gray-600 flex justify-center items-center">
+        <Lottie options={defaultOptions} height={400} width={400} />
+      </div>
+      }
     </div>
   );
 };

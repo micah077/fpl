@@ -62,11 +62,11 @@ const CaptainCard: React.FC<CaptainCardProps> = ({
       // data-aos-duration="2000"
     >
       <MdInfoOutline
-        className="absolute top-3 right-3 z-[30] text-xl text-icon-green cursor-pointer"
+        className="absolute top-3 right-3 z-1 text-xl text-icon-green cursor-pointer"
         onClick={() => infoClick(playerId, playerElement, managerLeagueData, playerData.round)}
       />
       {/* Team Badge */}
-      <div className="w-full h-36 flex justify-end absolute top-0 left-0 z-[10]">
+      <div className="w-full h-36 flex justify-end absolute top-0 left-0 z-1">
         <div className="w-full h-full relative opacity-20">
           <Image
             src={teamBadge}
@@ -81,7 +81,7 @@ const CaptainCard: React.FC<CaptainCardProps> = ({
       </div>
       {/* Team Badge */}
       {/* Player Image */}
-      <div className="w-full h-full flex justify-end relative z-[20]">
+      <div className="w-full h-full flex justify-end relative z-1">
         <div className="w-3/4 h-full absolute bottom-0">
           <Image
             src={captainPhoto}
@@ -109,7 +109,7 @@ const CaptainCard: React.FC<CaptainCardProps> = ({
       {/* Player Name */}
 
       {/* Selected and Points */}
-      <div className="absolute top-14 left-3 z-[30] flex flex-col gap-1">
+      <div className="absolute top-14 left-3 z-1 flex flex-col gap-1">
         <div>
           <div className="flex items-center gap-1">
             <HowToRegOutlinedIcon className=" text-icon-green" />

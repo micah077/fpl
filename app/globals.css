@@ -52,3 +52,9 @@
     );
     border-radius: 6px;
   } */
+
+
+  .hide-scrollbar {
+    overflow: hidden;
+    height: 100vh; /* Ensure the page content doesn't overflow */
+  }
