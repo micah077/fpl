@@ -48,8 +48,8 @@ const LeagueTable = ({ leagueId }: { leagueId: string }) => {
   const [isInfoModalOpen, setInfoModalOpen] = useState(false); // State for modal visibility
   const [leagueTableData, setLeagueTableData] = useState<LeagueTableData | null>(null); // State for league table data
   const [selectedManager, setSelectedManager] = useState<Result>(); // State for selected manager
-  const [loader,setLoader] = useState(false)
-  const [isError,setIsError] = useState(false)
+  const [loader, setLoader] = useState(false)
+  const [isError, setIsError] = useState(false)
 
   const openMoreModal = () => {
     setMoreModalOpen(true);
@@ -76,7 +76,7 @@ const LeagueTable = ({ leagueId }: { leagueId: string }) => {
 
 
   useEffect(() => {
-
+    console.log('fetch started')
     if (leagueId) {
       fetchData();
     }
@@ -144,7 +144,7 @@ const LeagueTable = ({ leagueId }: { leagueId: string }) => {
 
   return (
     <div className="col-span-2">
-      <MainCard error={isError} onRefresh={()=>fetchData()} loader={loader} title={`Live League Table`}>
+      <MainCard error={isError} onRefresh={() => fetchData()} loader={loader} title={`Live League Table`}>
         <div className="overflow-auto">
           <table className="w-full">
             <thead className="text-sm text-primary-gray">

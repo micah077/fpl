@@ -1,11 +1,7 @@
 "use client";
 import WhiteCard from "@/components/Card/WhiteCard";
 import Header from "@/components/Header/Header";
-import {
-  getManager,
-  getLeague,
-  getBootstrapStatic,
-} from "@/lib/utils/FPLFetch";
+import { getManager, getLeague, getBootstrapStatic } from "@/lib/utils/FPLFetch";
 import CaptainsView from "@/components/Captain/CaptainsView";
 import TransferInOut from "@/components/Transfer/TransferInOut";
 import TransferStats from "@/components/Transfer/TransferStats";
@@ -40,53 +36,65 @@ const Page = ({
   params: { managerId: string; leagueId: string };
 }) => {
   const [managerData, setManagerData] = useState<any>([]);
-  const [isLoading, setIsLoading] = useState(true); 
-  
- 
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchManager = async (managerId: string) => {
+    const BASE_URL =
+      process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
+
+    try {
+
+      const res = await fetch(
+        `${NEXT_API_BASE_URL}/getManager/${managerId}`
+      );
+      const data = await res.json();
+
+      return data
+    } catch (error) {
+      console.error("Error fetching value:", error);
+    }
+  };
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setTimeout(async () => {
-          const data = await getManager(params.managerId);
+          const data = await fetchManager(params.managerId);
           setManagerData(data);
-          setIsLoading(false); 
+          setIsLoading(false); // Hide loader after 3 seconds
         }, 3000);
       } catch (error) {
         console.error(error, "error");
-        setIsLoading(false); 
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [params.managerId]);
+  }, [params.managerId, params.leagueId]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black/60 flex justify-center items-center">
-        <Lottie options={defaultOptions}
-          height={400}
-          width={400}
-        />
+        <Lottie options={defaultOptions} height={400} width={400} />
       </div>
     );
   }
+
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header managerData={managerData} leagueId={params.leagueId} />
       <Head>
         <title>FPL League Insights</title>
-        <meta
-          name="description"
-          content="Gain insights into your FPL league's dynamics"
-        />
+        <meta name="description" content="Gain insights into your FPL league's dynamics" />
       </Head>
 
       <link rel="icon" href="/Tab-logo.svg" type="image/svg+xml" />
       <div className="flex-grow">
         <div className="flex gap-4 relative -top-[160px] left-0 w-full px-4 md:px-8 pb-8">
           <div className="w-full lg:w-[88%] flex flex-col gap-8">
-
             <CaptainsView leagueId={params.leagueId} />
             <LeagueTable leagueId={params.leagueId} />
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4">
