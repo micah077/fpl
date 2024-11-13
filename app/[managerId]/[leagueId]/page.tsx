@@ -80,6 +80,10 @@ const Page = ({
 
   return (
     <div className="min-h-screen flex flex-col">
+      {isLoading && <div className="absolute w-screen z-10 top-0 h-full bg-gray-600 flex justify-center items-center">
+        <Lottie options={defaultOptions} height={400} width={400} />
+      </div>
+      }
       <Header managerData={managerData} leagueId={params.leagueId} />
       <Head>
         <title>FPL League Insights</title>
@@ -122,10 +126,7 @@ const Page = ({
       <div className="top-[250px]">
         <Footer />
       </div>
-      {isLoading && <div className="absolute w-screen z-10 top-0 h-full bg-gray-600 flex justify-center items-center">
-        <Lottie options={defaultOptions} height={400} width={400} />
-      </div>
-      }
+
     </div>
   );
 };
