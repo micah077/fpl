@@ -47,7 +47,7 @@ interface Transfer {
   elementOut: Element;
   elementInGWData: FPLHistory;
   elementOutGWData: FPLHistory;
-  
+
 }
 
 interface UserTransfer {
@@ -65,7 +65,9 @@ type UserTransfers = UserTransfer[];
 
 const TransferStats = ({ leagueId }: { leagueId: string }) => {
   const [transfersData, setTransfersData] = useState<UserTransfers>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [isError, setIsError] = useState(false)
+
   const [pressedTransferStats, setPressedTransferStats] = useState<UserTransfer | null>(null);
 
   const divRef = useRef<HTMLDivElement | null>(null);
@@ -83,7 +85,7 @@ const TransferStats = ({ leagueId }: { leagueId: string }) => {
     setModalOpen(true);
     document.body.style.overflow = "hidden";
   }; // Function to open the modal
-  
+
   const closeModal = () => {
     setModalOpen(false);
     document.body.style.overflow = "auto";
@@ -165,36 +167,41 @@ const TransferStats = ({ leagueId }: { leagueId: string }) => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-      const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
-  
 
-        if (transfersData.length === 0) {
-          setLoading(true); // Start loading state
-          try {
-            const res = await fetch(`${NEXT_API_BASE_URL}/getTransferStats/${leagueId}`);
-            if (!res.ok) {
-              throw new Error(`Error fetching transfer stats: ${res.statusText}`);
-            }
-            const data: UserTransfers = await res.json();
-            
-            // Sort the data
-            const sortedData = data.slice().sort((a, b) => b.totalTransferResult - a.totalTransferResult);
-            setTransfersData(sortedData); // Update state with sorted data
-          } catch (error) {
-            console.error("Error fetching transfer data:", error);
-          } finally {
-            setLoading(false); // End loading state
-          }
-        }
-      }
-  
+
     if (leagueId) {
       fetchData(); // Fetch data only if leagueId exists
     }
   }, [leagueId]); // Ensure the effect triggers only when leagueId changes
-  
+
+
+  const fetchData = async () => {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
+
+
+    setLoading(true); // Start loading state
+    setIsError(false)
+    try {
+      const res = await fetch(`${NEXT_API_BASE_URL}/getTransferStats/${leagueId}`);
+      if (!res.ok) {
+        throw new Error(`Error fetching transfer stats: ${res.statusText}`);
+      }
+      const data: UserTransfers = await res.json();
+
+      // Sort the data
+      const sortedData = data.slice().sort((a, b) => b.totalTransferResult - a.totalTransferResult);
+      setTransfersData(sortedData); // Update state with sorted data
+    } catch (error) {
+      console.error("Error fetching transfer data:", error);
+      setIsError(true)
+
+    } finally {
+      setLoading(false); // End loading state
+    }
+  }
+
+
   useEffect(() => {
     const updateChartDimensions = () => {
       if (divRef.current) {
@@ -222,17 +229,11 @@ const TransferStats = ({ leagueId }: { leagueId: string }) => {
     };
   }, [transfersData]);
 
-  if (loading) {
-    return (
-      <MainCard title={`Transfer Stats`}>
-        <p>Loading...</p>
-      </MainCard>
-    );
-  }
+
 
   return (
     <div className="w-full">
-      <MainCard title={`Transfer Stats`}>
+      <MainCard error={isError} onRefresh={() => fetchData()} loader={loading} title={`Transfer Stats`}>
         <div className="flex-1 relative">
           {scrollLeft > 0 && (
             <button
@@ -300,11 +301,10 @@ const TransferStats = ({ leagueId }: { leagueId: string }) => {
       <Popup isOpen={isModalOpen} onClose={closeModal}>
         {/* Popup */}
         <div
-          className={`w-[90%]  md:w-3/4 lg:w-2/5 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${
-            isModalOpen
-              ? "top-[50%] visible opacity-100"
-              : "top-[40%] invisible opacity-0"
-          } transition duration-500`}
+          className={`w-[90%]  md:w-3/4 lg:w-2/5 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${isModalOpen
+            ? "top-[50%] visible opacity-100"
+            : "top-[40%] invisible opacity-0"
+            } transition duration-500`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Popup head */}
@@ -337,7 +337,7 @@ const TransferStats = ({ leagueId }: { leagueId: string }) => {
                 </div>
                 <div className="flex flex-col md:flex-row items-center gap-1">
                   <div className="w-10 h-10 rounded-full bg-third-gradient flex justify-center items-center">
-                  <DifferenceOutlinedIcon />
+                    <DifferenceOutlinedIcon />
                   </div>
                   <p className="flex flex-col items-center md:items-start">
                     <span className="text-[#474747] font-medium">{pressedTransferStats?.totalTransferResult}</span>
@@ -348,7 +348,7 @@ const TransferStats = ({ leagueId }: { leagueId: string }) => {
                 </div>
                 <div className="flex flex-col md:flex-row items-center gap-1">
                   <div className="w-10 h-10 rounded-full bg-third-gradient flex justify-center items-center">
-                  <PriceChangeOutlinedIcon />
+                    <PriceChangeOutlinedIcon />
                   </div>
                   <p className="flex flex-col items-center md:items-start">
                     <span className="text-[#474747] font-medium">{pressedTransferStats?.event_transfers_cost}</span>
@@ -364,15 +364,15 @@ const TransferStats = ({ leagueId }: { leagueId: string }) => {
             <div className="p-4 flex flex-col gap-5">
               {pressedTransferStats?.transfers.map((transfer, index) => (
                 <div className="flex justify-center gap-4 relative" key={index}>
-                <TransferCard transfer_photo={transfer.element_out_photo} transfer_point={transfer.element_out_point.toString()} transfer_first_name={transfer.elementOut.first_name} transfer_second_name={transfer.elementOut.second_name} team_code={transfer.elementOut.team_code}/>
-                <TransferCard transfer_photo={transfer.element_in_photo} transfer_point={transfer.element_in_point.toString()} transfer_first_name={transfer.elementIn.first_name} transfer_second_name={transfer.elementIn.second_name} team_code={transfer.elementIn.team_code}/>
-                <div className="w-8 h-8 rounded-full bg-primary-gradient text-[#474747] text-lg flex justify-center items-center absolute top-24 mt-2">
-                  <p className="text-sm font-semibold">{transfer.element_in_point- transfer.element_out_point}</p>
+                  <TransferCard transfer_photo={transfer.element_out_photo} transfer_point={transfer.element_out_point.toString()} transfer_first_name={transfer.elementOut.first_name} transfer_second_name={transfer.elementOut.second_name} team_code={transfer.elementOut.team_code} />
+                  <TransferCard transfer_photo={transfer.element_in_photo} transfer_point={transfer.element_in_point.toString()} transfer_first_name={transfer.elementIn.first_name} transfer_second_name={transfer.elementIn.second_name} team_code={transfer.elementIn.team_code} />
+                  <div className="w-8 h-8 rounded-full bg-primary-gradient text-[#474747] text-lg flex justify-center items-center absolute top-24 mt-2">
+                    <p className="text-sm font-semibold">{transfer.element_in_point - transfer.element_out_point}</p>
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-primary-gradient text-[#474747] text-lg flex justify-center items-center absolute top-16">
+                    <SwapHorizontalCircleOutlinedIcon />
+                  </div>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-primary-gradient text-[#474747] text-lg flex justify-center items-center absolute top-16">
-                  <SwapHorizontalCircleOutlinedIcon />
-                </div>
-              </div>
               ))}
             </div>
           </div>
