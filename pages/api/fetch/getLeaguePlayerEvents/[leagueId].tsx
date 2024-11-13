@@ -5,7 +5,7 @@ import { Element } from '@/lib/types/FPLStatic';
 import { log } from 'console';
 import { Result } from '@/lib/types/FPLLeague';
 
-type ManagerData ={
+type ManagerData = {
     managerData: Result;
     managerGWData: FPLUserGameweek;
 }
@@ -20,54 +20,50 @@ type ManagerData ={
  */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        const { leagueId} = req.query;
+        const { leagueId } = req.query;
         if (!leagueId) {
             return res.status(400).json({ error: 'leagueId is required' });
         }
 
-        let leagueData;
-        try {
-            leagueData = await getLeague(leagueId.toString());
-        } catch (error) {
-            console.error(`Error fetching league data for leagueId ${leagueId}:`, error);
-            return res.status(500).json({ error: `Error fetching league data: ${error}` });
-        }
+        const [leagueData, staticData] = await Promise.all([
+            getLeague(leagueId.toString()).catch(error => {
+                console.error(`Error fetching league data for leagueId ${leagueId}:`, error);
+                throw new Error(`Error fetching league data: ${error}`);
+            }),
+            getBootstrapStatic().catch(error => {
+                console.error('Error fetching static data:', error);
+                throw new Error('Error fetching static data: ' + error);
+            })
+        ]);
 
-        const userIds = leagueData.standings.results.map(result => result.entry);
-        const leagueManagers: Result[] = leagueData.standings.results;
+        // Destructure data immediately after fetching
+        const { standings } = leagueData;
+        const userIds = standings.results.map(result => result.entry);
+        const leagueManagers: Result[] = standings.results;
 
-        let staticData;
-        try {
-            staticData = await getBootstrapStatic();
-        } catch (error) {
-            console.error('Error fetching static data:', error);
-            return res.status(500).json({ error: `Error fetching static data: ${error}` });
-        }
 
         const currentGameweek = staticData?.events?.find(event => event.is_current)?.id || 1;
 
-         //loop through all userIds, and add the getUserGWdata to the object managerData
-        const managerData: ManagerData[] = [];
+        //loop through all userIds, and add the getUserGWdata to the object managerData
 
 
         // call the refreshEvents api, inclduing currentGameweek and userIds 
-        const updatedDataWithPlayerData: EventDatabase[]  = [];
-        try {
-            const updateData = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/refreshEvents`, {
+        try {
+            await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/refreshEvents`, {
                 method: 'POST',
                 cache: 'no-store',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    currentGameweek: currentGameweek, 
+                    currentGameweek: currentGameweek,
                     userIds: userIds
                 })
             });
         } catch (error) {
             console.error('Error:', error);
         }
-        
+
         // now, get all data from the database api using the getEvent API from app/pages/api/getEvent/[gw]
         const updatedData = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/getEvent/${currentGameweek}`, { cache: 'no-store' });
         const updatedDatabaseEventData: EventDatabase[] = await updatedData.json();
@@ -75,51 +71,58 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         
         // get the IDs of all players all the users in the league has
         //Loop through all userIds, get all the unique playerIds in their team, and add them to a list
-        const allPlayerIds: number[] = [];
+        const allPlayerIds = new Set<number>();
 
-        //split userIds into arrays of 5, and only do promise.all on five users at the time. 
+        const leagueManagersMap = new Map(leagueManagers.map(manager => [manager.entry, manager]));
+
+        const managerDataPromises = userIds.map(async (userId) => {
+            try {
+                const userGWData = await getUserGWData(userId, currentGameweek);
+                const playerIds = userGWData.picks.map((pick) => pick.element);
         
-        for (const userId of userIds) {
-            const userGWData = await getUserGWData(userId, currentGameweek);
-            const playerIds = userGWData.picks.map((pick) => pick.element);
+                // Add player IDs to the Set (no duplicates)
+                playerIds.forEach(id => allPlayerIds.add(id));
+        
+                // Use the leagueManagersMap for quick lookup instead of find()
+                const manager = leagueManagersMap.get(userId);
+        
+                if (manager) {
+                    return {
+                        managerData: manager,
+                        managerGWData: userGWData
+                    };
+                }
+            } catch (error) {
+                console.error(`Error fetching GW data for userId ${userId}:`, error);
+            }
+        
+            return null;
+        });
 
-            allPlayerIds.push(...playerIds);
-            const allManagerData: ManagerData = {
-            managerData: leagueManagers.find((manager) => manager.entry === userId) as Result,
-            managerGWData: userGWData
-            };
-            // Add userGWData to managerData
-            managerData.push(allManagerData);
-        }
+        const resolvedManagerData = await Promise.all(managerDataPromises);
 
-        // create a set of all playerIds, to get all unique IDs
-        const uniquePlayerIds = Array.from(new Set(allPlayerIds));
+        const validManagerData = resolvedManagerData.filter((data) => data !== null);
+        
+        const managerData = validManagerData as ManagerData[]; // Type assertion since we filtered null
+        
+        const uniquePlayerIds = Array.from(allPlayerIds);
 
         var sortedSlicedPlayerData: EventDatabase[] = [];
-        console.log(updatedDatabaseEventData,'updatedDatabaseEventData')
-        if(updatedDatabaseEventData) {
-            
+
+        if (updatedDatabaseEventData) {
             const slicedData: EventDatabase[] = updatedDatabaseEventData
                 .filter((event) => uniquePlayerIds.includes(Number(event.playerId)))
                 .sort((a, b) => a.eventDate - b.eventDate).reverse();
 
-
-            // Add playerData to the slicedData object from the static data
-
-            
             const slicedPlayerDataPromise = slicedData.map(async (event) => {
-                if(event.playerId) {
+                if (event.playerId) {
                     const id: string = event.playerId;
                     const playerData: Element[] = staticData.elements
-                    const playerIdData = await getPlayerDataById({id, playerData});
-                    
-                    
-                    // loop through managerData, and see if id is in picks of the managaer
-                    // if it is, add the manager data to the event object
+                    const playerIdData = await getPlayerDataById({ id, playerData });
                     const managersWithPlayer = managerData.filter((manager) => {
                         return manager.managerGWData.picks.some((pick) => pick.element.toString() === id.toString());
                     });
-                    
+
                     if (managersWithPlayer.length > 0) {
                         event.managerInsights = managersWithPlayer.map((manager) => {
                             return manager.managerData;
@@ -131,27 +134,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         playerIdData
                     };
                 }
-                return event; 
+                return event;
             });
 
             const slicedPlayerData: FPLLeagueEvents[] = await Promise.all(slicedPlayerDataPromise);
-
-            
             sortedSlicedPlayerData = slicedPlayerData.sort((a: EventDatabase, b: EventDatabase) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-            .filter((event) => event.gw === currentGameweek)
-            
-            
-
-
+                .filter((event) => event.gw === currentGameweek)
         } else {
-
-            
             sortedSlicedPlayerData = [];
         }
-
-
-
-
         return res.status(200).json(sortedSlicedPlayerData);
     } catch (error) {
         console.error('Unexpected error in handler:', error);

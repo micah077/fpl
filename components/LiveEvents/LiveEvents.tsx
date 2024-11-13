@@ -16,7 +16,6 @@ const LiveEvents = ({ leagueId }: { leagueId: string }) => {
   const [leagueEvent, setLeagueEvent] = useState<FPLLeagueEvents[]>([]); // State for player data
   const [selectedPlayer, setSelectedPlayer] = useState<Element>(); // State for selected player
   const [ownedUsers, setownedUsers] = useState<FPLResult[]>();
-
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<boolean>(false);
 
@@ -226,11 +225,11 @@ const LiveEvents = ({ leagueId }: { leagueId: string }) => {
                     <div className="flex flex-col">
                       <span>
                         {
-                          ((event.managerInsights.length / numberOfManagersInLeague) * 100).toFixed(1)
+                          ((event?.managerInsights?.length / numberOfManagersInLeague) * 100).toFixed(1)
                         }%
                       </span>
                       <span className="text-xs">
-                        ({"" + event.managerInsights.length.toString() + "/" + numberOfManagersInLeague.toString()}) {/*{getFormatedPercentage(player.percentage)}*/}
+                        ({"" + event.managerInsights?.length.toString() + "/" + numberOfManagersInLeague?.toString()}) {/*{getFormatedPercentage(player.percentage)}*/}
                       </span>
                     </div>
                   </td>
@@ -250,7 +249,7 @@ const LiveEvents = ({ leagueId }: { leagueId: string }) => {
             </tbody>
           </table>
         </div>
-        {sortedData.length > 5 && (
+        {sortedData?.length > 5 && (
           <div className="flex justify-end items-center my-3 px-6">
             <button
               className="text-sm text-primary-gray font-medium flex items-center gap-1"
@@ -352,11 +351,11 @@ const LiveEvents = ({ leagueId }: { leagueId: string }) => {
                         <div className="flex flex-col">
                           <span>
                             {
-                              ((event.managerInsights.length / numberOfManagersInLeague) * 100).toFixed(1)
+                              ((event.managerInsights?.length / numberOfManagersInLeague) * 100).toFixed(1)
                             }%
                           </span>
                           <span className="text-xs">
-                            ({"" + event.managerInsights.length.toString() + "/" + numberOfManagersInLeague.toString()}) {/*{getFormatedPercentage(player.percentage)}*/}
+                            ({"" + event.managerInsights?.length.toString() + "/" + numberOfManagersInLeague.toString()}) {/*{getFormatedPercentage(player.percentage)}*/}
                           </span>
                         </div>
                       </td>
@@ -366,7 +365,7 @@ const LiveEvents = ({ leagueId }: { leagueId: string }) => {
                         <div className="flex justify-center items-center">
                           <MdInfoOutline
                             className="text-lg text-icon-green cursor-pointer"
-                            onClick={() => openModal(event.playerIdData, event.managerInsights)}
+                            onClick={() => openModal(event.playerIdData, event?.managerInsights)}
                           />
                         </div>
                       </td>
