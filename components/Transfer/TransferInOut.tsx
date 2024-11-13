@@ -27,7 +27,7 @@ const TransferInOut = ({
 }) => {
   const [transfers, setTransfers] = useState<Transfers>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<number | null>(null);
   const [isFromMoreModal, setFromMoreModal] = useState(false);
 
@@ -43,51 +43,38 @@ const TransferInOut = ({
   }; // Function to close the modal
 
   useEffect(() => {
-    const fetchData = async () => {
-      const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-      const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
-  
-      try {
-        setLoading(true); // Start loading state
-        const res = await fetch(`${NEXT_API_BASE_URL}/getTransferInOut/${inOut}/${leagueId}`);
-        if (!res.ok) {
-          throw new Error(`Error fetching transfer data: ${res.statusText}`);
-        }
-        const data: UserTransfer = await res.json();
-        setTransfers(data);
-      } catch (error) {
-        console.error("Error fetching transfer data:", error);
-        setError("Failed to fetch transfer data. Please try again later.");
-      } finally {
-        setLoading(false); // End loading state
-      }
-    };
-  
+
+
     if (leagueId && inOut) {
       fetchData(); // Fetch data only if both leagueId and inOut are valid
     }
   }, [leagueId, inOut]); // Ensure the effect only triggers when leagueId or inOut changes
-  
 
-  if (loading) {
-    return (
-      <MainCard title={`Top Transfers ${inOut}`}>
-        <p>Loading...</p>
-      </MainCard>
-    );
-  }
+  const fetchData = async () => {
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
 
-  if (error) {
-    return (
-      <MainCard title={`Top Transfers ${inOut}`}>
-        <p>{error}</p>
-      </MainCard>
-    );
-  }
+    try {
+      setLoading(true); // Start loading state
+      setError(false);
+      const res = await fetch(`${NEXT_API_BASE_URL}/getTransferInOut/${inOut}/${leagueId}`);
+      if (!res.ok) {
+        throw new Error(`Error fetching transfer data: ${res.statusText}`);
+      }
+      const data: UserTransfer = await res.json();
+      setTransfers(data);
+    } catch (error) {
+      console.error("Error fetching transfer data:", error);
+      setError(true);
+    } finally {
+      setLoading(false); // End loading state
+    }
+  };
+
 
   return (
     <div className="w-full">
-      <MainCard title={`Top Transfers ${inOut}`}>
+      <MainCard error={error} onRefresh={() => fetchData()} loader={loading} title={`Top Transfers ${inOut}`}>
         <div className="overflow-auto">
           <table className="w-full">
             <thead className="text-sm text-primary-gray">
@@ -146,9 +133,8 @@ const TransferInOut = ({
                       />
                       {showInfo === index && !isFromMoreModal && (
                         <ul
-                          className={`bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute ${
-                            showInfo === 4 ? "bottom-2" : "top-2"
-                          } right-12 z-[5]`}
+                          className={`bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute ${showInfo === 4 ? "bottom-2" : "top-2"
+                            } right-12 z-[5]`}
                         >
                           {details.users.map((user, idx) => (
                             <li key={idx}>{user}</li>
@@ -176,11 +162,10 @@ const TransferInOut = ({
       <Popup isOpen={isModalOpen} onClose={closeModal}>
         {/* Popup */}
         <div
-          className={`w-[90%] md:w-3/5 lg:w-2/5 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${
-            isModalOpen
+          className={`w-[90%] md:w-3/5 lg:w-2/5 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${isModalOpen
               ? "top-[50%] visible opacity-100"
               : "top-[40%] invisible opacity-0"
-          } transition duration-500`}
+            } transition duration-500`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Popup head */}
@@ -268,11 +253,10 @@ const TransferInOut = ({
                         />
                         {showInfo === index && isFromMoreModal && (
                           <ul
-                            className={`bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute ${
-                              showInfo === transfers.length - 1
+                            className={`bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute ${showInfo === transfers.length - 1
                                 ? "bottom-2"
                                 : "top-2"
-                            } right-12 z-[5]`}
+                              } right-12 z-[5]`}
                           >
                             {details.users.map((user, idx) => (
                               <li key={idx}>{user}</li>
