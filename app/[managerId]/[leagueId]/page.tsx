@@ -17,18 +17,11 @@ import SquareAd from "@/components/Common/SquareAd";
 import LeagueTable from "@/components/LeagueTable/LeagueTable";
 import Footer from "@/components/Footer/Footer";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Lottie from 'react-lottie';
 import { footballPerson } from "@/animations";
 
-const defaultOptions = {
-  loop: true,
-  autoplay: true,
-  animationData: footballPerson,
-  rendererSettings: {
-    preserveAspectRatio: 'xMidYMid slice'
-  }
-};
+
 
 const Page = ({
   params,
@@ -37,7 +30,14 @@ const Page = ({
 }) => {
   const [managerData, setManagerData] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const defaultOptions = useMemo(() => ({
+    loop: true,
+    autoplay: true,
+    animationData: footballPerson,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice',
+    },
+  }), []);
   const fetchManager = async (managerId: string) => {
     const BASE_URL =
       process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
@@ -79,55 +79,61 @@ const Page = ({
 
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {isLoading && <div className="absolute w-screen z-10 top-0 h-full bg-gray-600 flex justify-center items-center">
-        <Lottie options={defaultOptions} height={400} width={400} />
-      </div>
-      }
-      <Header managerData={managerData} leagueId={params.leagueId} />
-      <Head>
-        <title>FPL League Insights</title>
-        <meta name="description" content="Gain insights into your FPL league's dynamics" />
-      </Head>
-
-      <link rel="icon" href="/Tab-logo.svg" type="image/svg+xml" />
-      <div className="flex-grow">
-        <div className="flex gap-4 relative -top-[160px] left-0 w-full px-4 md:px-8 pb-8">
-          <div className="w-full z-1 lg:w-[88%] flex flex-col gap-8">
-            <CaptainsView leagueId={params.leagueId} />
-            <LeagueTable leagueId={params.leagueId} />
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <TransferStats leagueId={params.leagueId} />
-              <TransferInOut leagueId={params.leagueId} inOut={"In"} />
-              <TransferInOut leagueId={params.leagueId} inOut={"Out"} />
-            </div>
-            <SquareAd imgUrl="/ad1.png" />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <MostOwnedPlayer leagueId={params.leagueId} isDiff={false} />
-              <MostOwnedPlayer leagueId={params.leagueId} isDiff={true} />
-            </div>
-            <SquareAd imgUrl="/ad2.png" />
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-              <LiveEvents leagueId={params.leagueId} />
-              <TeamValue leagueId={params.leagueId} />
-            </div>
-            <SquareAd imgUrl="/ad3.png" />
-            <div className="flex flex-col lg:flex-row gap-4">
-              <BenchAndAutoSub leagueId={params.leagueId} />
-              <Chips leagueId={params.leagueId} />
-            </div>
-          </div>
-          <div className="w-full lg:w-[12%] flex-shrink-0 hidden lg:block">
-            <Advertise />
+    <>
+      {isLoading &&  <div className="absolute w-screen z-10 top-0 h-full bg-gray-600 flex justify-center items-center">
+          <div className="animation-container">
+            <Lottie options={defaultOptions} height={400} width={400} />
           </div>
         </div>
-      </div>
+      }
+      <div className="min-h-screen flex flex-col">
 
-      <div className="top-[250px]">
-        <Footer />
-      </div>
+        <Header managerData={managerData} leagueId={params.leagueId} />
+        <Head>
+          <title>FPL League Insights</title>
+          <meta name="description" content="Gain insights into your FPL league's dynamics" />
+        </Head>
 
-    </div>
+        <link rel="icon" href="/Tab-logo.svg" type="image/svg+xml" />
+        <div className="flex-grow">
+          <div className="flex gap-4 relative -top-[160px] left-0 w-full px-4 md:px-8 pb-8">
+            <div className="w-full z-1 lg:w-[88%] flex flex-col gap-8">
+              <CaptainsView leagueId={params.leagueId} />
+              <LeagueTable leagueId={params.leagueId} />
+              <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <TransferStats leagueId={params.leagueId} />
+                <TransferInOut leagueId={params.leagueId} inOut={"In"} />
+                <TransferInOut leagueId={params.leagueId} inOut={"Out"} />
+              </div>
+              <SquareAd imgUrl="/ad1.png" />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <MostOwnedPlayer leagueId={params.leagueId} isDiff={false} />
+                <MostOwnedPlayer leagueId={params.leagueId} isDiff={true} />
+              </div>
+              <SquareAd imgUrl="/ad2.png" />
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+                <LiveEvents leagueId={params.leagueId} />
+                <TeamValue leagueId={params.leagueId} />
+              </div>
+              <SquareAd imgUrl="/ad3.png" />
+              <div className="flex flex-col lg:flex-row gap-4">
+                <BenchAndAutoSub leagueId={params.leagueId} />
+                <Chips leagueId={params.leagueId} />
+              </div>
+            </div>
+            <div className="w-full lg:w-[12%] flex-shrink-0 hidden lg:block">
+              <Advertise />
+            </div>
+          </div>
+        </div>
+
+        <div className="top-[250px]">
+          <Footer />
+        </div>
+
+      </div>
+    </>
+
   );
 };
 

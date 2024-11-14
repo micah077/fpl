@@ -316,7 +316,7 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
           {canScrollRight && (
             <button
               onClick={handleNextClick}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 p-2 rounded-full shadow-primary"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 z-1 p-2 rounded-full shadow-primary"
               style={{ background: "rgba(0, 0, 0, 0.15)" }}
             >
               <FaArrowRight className="text-lg text-primary-gray" />
