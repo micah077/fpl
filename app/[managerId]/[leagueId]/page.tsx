@@ -18,7 +18,7 @@ import LeagueTable from "@/components/LeagueTable/LeagueTable";
 import Footer from "@/components/Footer/Footer";
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
-import Lottie from 'react-lottie';
+import Lottie from 'react-lottie-player';
 import { footballPerson } from "@/animations";
 
 
@@ -34,9 +34,7 @@ const Page = ({
     loop: true,
     autoplay: true,
     animationData: footballPerson,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
-    },
+   
   }), []);
   const fetchManager = async (managerId: string) => {
     const BASE_URL =
@@ -82,7 +80,7 @@ const Page = ({
     <>
       {isLoading &&  <div className="absolute w-screen z-10 top-0 h-full bg-gray-600 flex justify-center items-center">
           <div className="animation-container">
-            <Lottie options={defaultOptions} height={400} width={400} />
+            <Lottie loop play style={{ width: 400, height: 400 }} animationData={footballPerson} />
           </div>
         </div>
       }
