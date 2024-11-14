@@ -24,6 +24,7 @@ const Header = ({
       .sort((a, b) => b.rank_count - a.rank_count) || [];
 
   const handleClick = (leagueId: number, managerId: string) => {
+    document.body.classList.add("hide-scrollbar");
     router.push(`/${managerId}/${leagueId}`);
   };
 
