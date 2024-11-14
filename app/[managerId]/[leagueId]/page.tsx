@@ -18,7 +18,7 @@ import LeagueTable from "@/components/LeagueTable/LeagueTable";
 import Footer from "@/components/Footer/Footer";
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
-import Lottie from 'react-lottie-player';
+import Lottie from 'react-lottie';
 import { footballPerson } from "@/animations";
 
 
@@ -30,12 +30,12 @@ const Page = ({
 }) => {
   const [managerData, setManagerData] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const defaultOptions = useMemo(() => ({
+  const defaultOptions ={
     loop: true,
     autoplay: true,
     animationData: footballPerson,
 
-  }), []);
+  }
   const fetchManager = async (managerId: string) => {
     const BASE_URL =
       process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
@@ -68,6 +68,10 @@ const Page = ({
   }, [params.managerId, params.leagueId]);
 
   useEffect(() => {
+    window.scroll({
+      top:0,
+      behavior:"smooth"
+    })
     document.body.classList.add("hide-scrollbar");
     setTimeout(async () => {
       document.body.classList.remove("hide-scrollbar");
@@ -82,7 +86,7 @@ const Page = ({
     <>
       {isLoading && <div className="absolute w-screen z-10 top-0 h-full bg-gray-600 flex justify-center items-center">
         <div className="animation-container">
-          <Lottie loop play style={{ width: 400, height: 400 }} animationData={footballPerson} />
+          <Lottie options={defaultOptions} height={400} width={400} />
         </div>
       </div>
       }

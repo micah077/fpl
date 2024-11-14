@@ -76,7 +76,6 @@ const LeagueTable = ({ leagueId }: { leagueId: string }) => {
 
 
   useEffect(() => {
-    console.log('fetch started')
     if (leagueId) {
       fetchData();
     }
