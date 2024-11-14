@@ -19,7 +19,7 @@ import Footer from "@/components/Footer/Footer";
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
 import Lottie from 'react-lottie';
-import { footballPerson } from "@/animations";
+import { footballPerson, footballPlayer } from "@/animations";
 
 
 
@@ -30,7 +30,7 @@ const Page = ({
 }) => {
   const [managerData, setManagerData] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const defaultOptions ={
+  const defaultOptions = {
     loop: true,
     autoplay: true,
     animationData: footballPerson,
@@ -56,10 +56,20 @@ const Page = ({
 
   const fetchData = async () => {
     try {
-      const data = await fetchManager(params.managerId);
-      setManagerData(data);
+      window.scroll({
+        top: 0,
+        behavior: "smooth"
+      })
+      document.body.classList.add("hide-scrollbar");
+      setTimeout(async () => {
+        const data = await fetchManager(params.managerId);
+        document.body.classList.remove("hide-scrollbar");
+        setManagerData(data);
+        setIsLoading(false); // Hide loader after 3 seconds
+      }, 3000);
     } catch (error) {
       console.error(error, "error");
+      setIsLoading(false);
     }
   };
 
@@ -67,27 +77,11 @@ const Page = ({
     fetchData();
   }, [params.managerId, params.leagueId]);
 
-  useEffect(() => {
-    window.scroll({
-      top:0,
-      behavior:"smooth"
-    })
-    document.body.classList.add("hide-scrollbar");
-    setTimeout(async () => {
-      document.body.classList.remove("hide-scrollbar");
-      setIsLoading(false);
-    }, 3000);
-  }, []);
-
-
-
 
   return (
     <>
-      {isLoading && <div className="absolute w-screen z-10 top-0 h-full bg-gray-600 flex justify-center items-center">
-        <div className="animation-container">
-          <Lottie options={defaultOptions} height={400} width={400} />
-        </div>
+      {isLoading && <div className="absolute w-screen z-10 top-0 h-full bg-white flex justify-center items-center">
+        <img src={footballPlayer.src} className="h-[400px] w-[400px]" alt="Loading..." />
       </div>
       }
       <div className="min-h-screen flex flex-col">
