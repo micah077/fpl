@@ -34,7 +34,7 @@ const Page = ({
     loop: true,
     autoplay: true,
     animationData: footballPerson,
-   
+
   }), []);
   const fetchManager = async (managerId: string) => {
     const BASE_URL =
@@ -56,17 +56,12 @@ const Page = ({
 
   const fetchData = async () => {
     try {
-      document.body.classList.add("hide-scrollbar");
-      setTimeout(async () => {
-        const data = await fetchManager(params.managerId);
-        document.body.classList.remove("hide-scrollbar");
-        setManagerData(data);
-        setIsLoading(false); // Hide loader after 3 seconds
-      }, 3000);
+      const data = await fetchManager(params.managerId);
+      document.body.classList.remove("hide-scrollbar");
+      setManagerData(data);
 
     } catch (error) {
       console.error(error, "error");
-      setIsLoading(false);
     }
   };
 
@@ -74,15 +69,24 @@ const Page = ({
     fetchData();
   }, [params.managerId, params.leagueId]);
 
+  useEffect(() => {
+    document.body.classList.add("hide-scrollbar");
+    setTimeout(async () => {
+      document.body.classList.remove("hide-scrollbar");
+      setIsLoading(false);
+    }, 3000);
+  }, []);
+
+
 
 
   return (
     <>
-      {isLoading &&  <div className="absolute w-screen z-10 top-0 h-full bg-gray-600 flex justify-center items-center">
-          <div className="animation-container">
-            <Lottie loop play style={{ width: 400, height: 400 }} animationData={footballPerson} />
-          </div>
+      {isLoading && <div className="absolute w-screen z-10 top-0 h-full bg-gray-600 flex justify-center items-center">
+        <div className="animation-container">
+          <Lottie loop play style={{ width: 400, height: 400 }} animationData={footballPerson} />
         </div>
+      </div>
       }
       <div className="min-h-screen flex flex-col">
 
