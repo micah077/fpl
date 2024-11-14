@@ -18,7 +18,7 @@ interface TransferDetails {
 
 type Transfers = [string, TransferDetails][];
 
-const   TransferInOut = ({
+const TransferInOut = ({
   leagueId,
   inOut,
 }: {
@@ -30,6 +30,9 @@ const   TransferInOut = ({
   const [error, setError] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<number | null>(null);
   const [isFromMoreModal, setFromMoreModal] = useState(false);
+
+  const [showInfo2, setShowInfo2] = useState<number | null>(null);
+  const [isFromMoreModal2, setFromMoreModal2] = useState(false);
 
   const [isModalOpen, setModalOpen] = useState(false); // State for modal visibility
 
@@ -126,12 +129,16 @@ const   TransferInOut = ({
                       <MdInfoOutline
                         className="text-lg text-icon-green cursor-pointer"
                         onMouseEnter={() => {
-                          setFromMoreModal(false);
+                          setFromMoreModal(true);
                           setShowInfo(index);
                         }}
-                        onMouseLeave={() => setShowInfo(null)}
+                        onMouseLeave={() => {
+                          setShowInfo(null)
+                          setFromMoreModal(false);
+
+                        }}
                       />
-                      {showInfo === index && !isFromMoreModal && (
+                      {showInfo === index && isFromMoreModal && (
                         <ul
                           className={`bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute ${showInfo === 4 ? "bottom-2" : "top-2"
                             } right-12 z-[5]`}
@@ -163,8 +170,8 @@ const   TransferInOut = ({
         {/* Popup */}
         <div
           className={`w-[90%] md:w-3/5 lg:w-2/5 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${isModalOpen
-              ? "top-[50%] visible opacity-100"
-              : "top-[40%] invisible opacity-0"
+            ? "top-[50%] visible opacity-100"
+            : "top-[40%] invisible opacity-0"
             } transition duration-500`}
           onClick={(e) => e.stopPropagation()}
         >
@@ -242,39 +249,47 @@ const   TransferInOut = ({
                     </td>
                     <td className="px-4 py-2">{details.users.length}</td>
                     <td className="px-4 py-2">
-                      <div className="group flex justify-center items-center">
+                      <div
+
+                        className="flex justify-center items-center">
+                        <div
+
+                          onMouseEnter={() => {
+                            setFromMoreModal2(true);
+                            setShowInfo2(index);
+                          }}
+                          onMouseLeave={() => {
+                            setShowInfo2(null)
+                          }}
+                          className="flex justify-center items-center cursor-pointer">
                         <MdInfoOutline
                           className="text-lg text-icon-green cursor-pointer"
-                          onMouseEnter={() => {
-                            setFromMoreModal(true);
-                            setShowInfo(index);
-                          }}
-                          onMouseLeave={() => setShowInfo(null)}
+
                         />
-                        
+                        {showInfo2 === index && isFromMoreModal2 ? (
                           <ul
-                            className={`group-hover:inline-block hidden bg-secondary-green text-off-white text-[10px] z-10 text-start p-3 rounded-md space-y-1 absolute ${showInfo === transfers.length - 1
-                                ? "bottom-2"
-                                : "top-2"
-                              } right-12 `}
+                            className={`bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute ${showInfo === 4 ? "bottom-2" : "top-2"
+                              } right-16 z-[5]`}
                           >
                             {details.users.map((user, idx) => (
                               <li key={idx}>{user}</li>
                             ))}
                           </ul>
+                        ) : null}
                       </div>
-                    </td>
+                    </div>
+                  </td>
                   </tr>
                 ))}
-              </tbody>
-            </table>
-          </div>
-          {/* Popup content */}
+            </tbody>
+          </table>
         </div>
-        {/* Popup */}
-      </Popup>
-      {/* Modal Component */}
+        {/* Popup content */}
     </div>
+        {/* Popup */ }
+      </Popup >
+  {/* Modal Component */ }
+    </div >
   );
 };
 
