@@ -66,6 +66,10 @@ const Page = ({
         const data = await fetchManager(params.managerId);
         document.body.classList.remove("hide-scrollbar");
         setManagerData(data);
+        window.scroll({
+          top: 0,
+          behavior: "instant"
+        })
         setIsLoading(false); // Hide loader after 3 seconds
       }, 2000);
     } catch (error) {
