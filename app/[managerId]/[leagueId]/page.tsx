@@ -56,12 +56,12 @@ const Page = ({
 
   const fetchData = async () => {
     try {
-      document.body.classList.add("hide-scrollbar");
 
       window.scroll({
         top: 0,
         behavior: "instant"
       })
+      document.body.classList.add("hide-scrollbar");
       setTimeout(async () => {
         const data = await fetchManager(params.managerId);
         document.body.classList.remove("hide-scrollbar");
