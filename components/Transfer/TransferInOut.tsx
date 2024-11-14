@@ -18,7 +18,7 @@ interface TransferDetails {
 
 type Transfers = [string, TransferDetails][];
 
-const TransferInOut = ({
+const   TransferInOut = ({
   leagueId,
   inOut,
 }: {
@@ -242,7 +242,7 @@ const TransferInOut = ({
                     </td>
                     <td className="px-4 py-2">{details.users.length}</td>
                     <td className="px-4 py-2">
-                      <div className="flex justify-center items-center">
+                      <div className="group flex justify-center items-center">
                         <MdInfoOutline
                           className="text-lg text-icon-green cursor-pointer"
                           onMouseEnter={() => {
@@ -251,18 +251,17 @@ const TransferInOut = ({
                           }}
                           onMouseLeave={() => setShowInfo(null)}
                         />
-                        {showInfo === index && isFromMoreModal && (
+                        
                           <ul
-                            className={`bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute ${showInfo === transfers.length - 1
+                            className={`group-hover:inline-block hidden bg-secondary-green text-off-white text-[10px] z-10 text-start p-3 rounded-md space-y-1 absolute ${showInfo === transfers.length - 1
                                 ? "bottom-2"
                                 : "top-2"
-                              } right-12 z-[5]`}
+                              } right-12 `}
                           >
                             {details.users.map((user, idx) => (
                               <li key={idx}>{user}</li>
                             ))}
                           </ul>
-                        )}
                       </div>
                     </td>
                   </tr>
