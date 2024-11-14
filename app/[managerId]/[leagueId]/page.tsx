@@ -57,9 +57,7 @@ const Page = ({
   const fetchData = async () => {
     try {
       const data = await fetchManager(params.managerId);
-      document.body.classList.remove("hide-scrollbar");
       setManagerData(data);
-
     } catch (error) {
       console.error(error, "error");
     }
