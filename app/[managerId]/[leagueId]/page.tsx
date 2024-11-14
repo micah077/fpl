@@ -56,8 +56,12 @@ const Page = ({
 
   const fetchData = async () => {
     try {
-      
       document.body.classList.add("hide-scrollbar");
+
+      window.scroll({
+        top: 0,
+        behavior: "instant"
+      })
       setTimeout(async () => {
         const data = await fetchManager(params.managerId);
         document.body.classList.remove("hide-scrollbar");
@@ -71,10 +75,7 @@ const Page = ({
   };
 
   useEffect(() => {
-    window.scroll({
-      top: 0,
-      behavior: "instant"
-    })
+    
     fetchData();
   }, [params.managerId, params.leagueId]);
 
