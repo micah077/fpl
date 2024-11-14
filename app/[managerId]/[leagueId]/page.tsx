@@ -58,7 +58,7 @@ const Page = ({
     try {
       window.scroll({
         top: 0,
-        behavior: "smooth"
+        behavior: "instant"
       })
       document.body.classList.add("hide-scrollbar");
       setTimeout(async () => {
