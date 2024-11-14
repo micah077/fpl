@@ -66,7 +66,7 @@ const Page = ({
         document.body.classList.remove("hide-scrollbar");
         setManagerData(data);
         setIsLoading(false); // Hide loader after 3 seconds
-      }, 3000);
+      }, 2000);
     } catch (error) {
       console.error(error, "error");
       setIsLoading(false);
