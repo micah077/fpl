@@ -21,6 +21,7 @@ import { FaUsersRectangle, FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import MemoryOutlinedIcon from '@mui/icons-material/MemoryOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import AutoGraphOutlinedIcon from '@mui/icons-material/AutoGraphOutlined';
+import { isNumber } from "util";
 
 interface userChipData {
   managerData: FPLManager;
@@ -93,7 +94,8 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
     if (chip === "freehit" || chip === "wildcard" || chip === "bboost") {
       const usersData = chipData?.userData[chip];
       const totalPoints = usersData?.reduce((acc, user) => acc + user?.userGW?.entry_history?.points, 0);
-      return (totalPoints / usersData?.length).toFixed(1);
+      const total: any = (totalPoints / usersData?.length).toFixed(1)
+      return total;
     }
 
     // for triple captain chip, calculate average of points of the captain for the selected user, the gw the chip was played
@@ -106,9 +108,9 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
         const playerGWDataPoints = user?.playerGWData?.total_points as number;
         return acc + playerGWDataPoints;
       }, 0);
+      const total = (totalPoints / usersData?.length).toFixed(1)
 
-
-      return (totalPoints / usersData?.length).toFixed(1);
+      return total;
     }
   }
 
@@ -136,7 +138,7 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
   }, [leagueId]);
 
   const fetchData = async () => {
-   
+
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
     const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
 
@@ -317,50 +319,52 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
 
   return (
     <div className="flex-1 flex-shrink-0">
-      <MainCard error={error} loader={isLoading} onRefresh={()=>fetchData()} title={`Chips`}>
+      <MainCard error={error} loader={isLoading} onRefresh={() => fetchData()} title={`Chips`}>
         <div className="flex-1 p-3 grid grid-cols-1 justify-items-center gap-4">
-          {chips.map((chip) => (
-            <div
-              className="w-full px-3 py-2 rounded-md shadow-sm flex justify-between items-center gap-2"
-              key={chip.id}
-            >
-              <Image
-                src={getChipImg(chipData as chipData, chip.webidentifier)}
-                alt={chip.webidentifier || "chips"}
-                width={60}
-                height={60}
+          {chips.map((chip) => {
+            return (
+              <div
+                className="w-full px-3 py-2 rounded-md shadow-sm flex justify-between items-center gap-2"
+                key={chip.id}
+              >
+                <Image
+                  src={getChipImg(chipData as chipData, chip.webidentifier)}
+                  alt={chip.webidentifier || "chips"}
+                  width={60}
+                  height={60}
 
-              />
+                />
 
-              <div className="flex-1">
-                <div className="flex justify-between items-center gap-1">
-                  <h3 className="text-primary-gray font-medium">{chip.name}</h3>
-                  <MdInfoOutline
-                    className={`text-lg ${chipData?.userData[chip.webidentifier]?.filter(userChip => userChip.userGW.entry_history.event === chipData?.gw).length ? "text-icon-green cursor-pointer" : "text-secondary-gray"}`}
-                    onClick={() => {
-                      if ((chipData && ((chipData?.userData[chip.webidentifier]?.length) / (chipData?.userIds?.length)) * 100 || 0) > 0) {
-                        openModal(chip.webidentifier);
-                      }
-                    }}
-                  />
-                </div>
-                <div className="flex justify-between items-center gap-3">
-                  <div className="flex items-center gap-1 text-sm">
-                    <FaUsers className="flex-shrink-0 text-secondary-gray" />
-                    <p className="text-[#474747] font-medium">{(chipData?.userData[chip.webidentifier]?.filter(userChip => userChip.userGW.entry_history.event === chipData?.gw).length || 0).toFixed(0)} </p>
+                <div className="flex-1">
+                  <div className="flex justify-between items-center gap-1">
+                    <h3 className="text-primary-gray font-medium">{chip.name}</h3>
+                    <MdInfoOutline
+                      className={`text-lg ${chipData?.userData[chip.webidentifier]?.filter(userChip => userChip.userGW.entry_history.event === chipData?.gw).length ? "text-icon-green cursor-pointer" : "text-secondary-gray"}`}
+                      onClick={() => {
+                        if ((chipData && ((chipData?.userData[chip.webidentifier]?.length) / (chipData?.userIds?.length)) * 100 || 0) > 0) {
+                          openModal(chip.webidentifier);
+                        }
+                      }}
+                    />
                   </div>
-                  <div className="flex items-center gap-1 text-sm">
-                    <FaUsersRectangle className="flex-shrink-0 text-secondary-gray" />
-                    <p className="text-[#474747] font-medium">{(chipData && ((chipData?.userData[chip.webidentifier]?.length) / (chipData?.userIds?.length)) * 100 || 0).toFixed(0)} %</p>
-                  </div>
-                  <div className="flex items-center gap-1 text-sm">
-                    <FaBullseye className="flex-shrink-0 text-secondary-gray" />
-                    <p className="text-[#474747] font-medium">{calculateAveragePoints(chipData as chipData, chip.webidentifier)}</p>
+                  <div className="flex justify-between items-center gap-3">
+                    <div className="flex items-center gap-1 text-sm">
+                      <FaUsers className="flex-shrink-0 text-secondary-gray" />
+                      <p className="text-[#474747] font-medium">{(chipData?.userData[chip.webidentifier]?.filter(userChip => userChip.userGW.entry_history.event === chipData?.gw).length || 0).toFixed(0)} </p>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm">
+                      <FaUsersRectangle className="flex-shrink-0 text-secondary-gray" />
+                      <p className="text-[#474747] font-medium">{(chipData && ((chipData?.userData[chip.webidentifier]?.length) / (chipData?.userIds?.length)) * 100 || 0).toFixed(0)} %</p>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm">
+                      <FaBullseye className="flex-shrink-0 text-secondary-gray" />
+                      <p className="text-[#474747] font-medium">{calculateAveragePoints(chipData as chipData, chip.webidentifier) == "NaN" ? 0 : calculateAveragePoints(chipData as chipData, chip.webidentifier)}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </MainCard>
 
@@ -369,8 +373,8 @@ const Chips = ({ leagueId }: { leagueId: string }) => {
         {/* Popup */}
         <div
           className={`w-[90%] md:w-3/5 lg:w-2/5 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${isModalOpen
-              ? "top-[50%] visible opacity-100"
-              : "top-[40%] invisible opacity-0"
+            ? "top-[50%] visible opacity-100"
+            : "top-[40%] invisible opacity-0"
             } transition duration-500`}
           onClick={(e) => e.stopPropagation()}
         >
