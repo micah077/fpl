@@ -86,7 +86,7 @@ const Page = ({
 
   return (
     <>
-      {isLoading && <div className="absolute w-screen z-10 top-0 h-full bg-white flex justify-center items-center">
+      {isLoading && <div className="absolute w-screen z-10 top-32 h-full bg-white flex justify-center items-center">
         <img src={footballPlayer.src} className="h-[400px] w-[400px]" alt="Loading..." />
       </div>
       }
