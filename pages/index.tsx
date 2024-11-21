@@ -63,18 +63,20 @@ export default function Home() {
 
   const handleSelectLeague = (userId: number | undefined, leagueId: number) => {
     router.push(`/${userId}/${leagueId}`);
+    localStorage.setItem("managerData",JSON.stringify(managerData))
+    localStorage.setItem("leagueId",leagueId.toString())
   };
 
 
   const scrollToSection = (direction: "up" | "down") => {
     const scrollY = window.scrollY;
     const windowHeight = window.innerHeight;
-  
+
     const introTop = introRef.current?.offsetTop || 0;
     const welcomeTop = welcomeRef.current?.offsetTop || 0;
     const landingStatsTop = landingStatsRef.current?.offsetTop || 0;
     const landingStatsHeight = landingStatsRef.current?.offsetHeight || 0;
-  
+
     // Scroll down logic
     if (direction === "down") {
       if (scrollY < welcomeTop - windowHeight / 2) {
@@ -85,7 +87,7 @@ export default function Home() {
         landingStatsRef.current?.scrollIntoView({ behavior: "smooth" });
       }
     }
-  
+
     // Scroll up logic
     if (direction === "up") {
       if (scrollY >= landingStatsTop - windowHeight / 2) {
@@ -97,23 +99,23 @@ export default function Home() {
       }
     }
   };
-  
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-  
+
       const landingStatsTop = landingStatsRef.current?.offsetTop || 0;
       const landingStatsHeight = landingStatsRef.current?.offsetHeight || 0;
-  
+
       // Update if we are at the top or bottom
       setIsAtTop(scrollY === 0);
-  
+
       // Disable down button if at the bottom of LandingStats
       const isAtLandingStatsBottom = scrollY + windowHeight >= landingStatsTop + landingStatsHeight;
       setIsAtBottom(isAtLandingStatsBottom);
     };
-  
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -137,7 +139,7 @@ export default function Home() {
 
       {/* Intro Section */}
       <div
-        id="intro" 
+        id="intro"
         ref={introRef}
         className="h-screen flex justify-center items-center"
         style={{
@@ -192,7 +194,7 @@ export default function Home() {
       <div id="landing-stats" ref={landingStatsRef}>
         <LandingStats />
       </div>
-      
+
       {/* Landing Stats */}
       <Footer />
 
@@ -216,11 +218,10 @@ export default function Home() {
       <Popup isOpen={isModalOpen} onClose={closeModal}>
         {/* Popup */}
         <div
-          className={`w-[90%] md:w-4/5 lg:w-1/2 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${
-            isModalOpen
+          className={`w-[90%] md:w-4/5 lg:w-1/2 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${isModalOpen
               ? "top-[50%] visible opacity-100"
               : "top-[40%] invisible opacity-0"
-          } transition duration-500`}
+            } transition duration-500`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Popup head */}
@@ -258,6 +259,7 @@ export default function Home() {
                     <td className="px-3 py-1">{league.name}</td>
                     <td className="px-3 py-1 text-center">{league.rank_count}</td>
                     <td className="px-3 py-1 text-center">
+                     
                       <button
                         className="px-2 py-1 rounded-md bg-primary-gradient"
                         onClick={() =>

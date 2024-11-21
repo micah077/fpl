@@ -66,6 +66,8 @@ const Page = ({
         const data = await fetchManager(params.managerId);
         document.body.classList.remove("hide-scrollbar");
         setManagerData(data);
+        localStorage.removeItem("leagueId")
+        localStorage.removeItem("managerData")
         window.scroll({
           top: 0,
           behavior: "instant"
@@ -79,14 +81,21 @@ const Page = ({
   };
 
   useEffect(() => {
-    
+
     fetchData();
   }, [params.managerId, params.leagueId]);
 
 
+  useEffect(() => {
+    // let data = localStorage.getItem("leagueId")
+    let data2: any = localStorage.getItem("managerData")
+    setManagerData(JSON.parse(data2))
+
+  }, [])
+
   return (
     <>
-      {isLoading && <div className="absolute w-screen z-10 top-32 h-full bg-white flex justify-center items-center">
+      {isLoading &&  <div className="absolute w-screen z-10 top-[140px] h-full bg-white flex justify-center items-center">
         <img src={footballPlayer.src} className="h-[400px] w-[400px]" alt="Loading..." />
       </div>
       }
