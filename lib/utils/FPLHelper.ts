@@ -240,7 +240,7 @@ export async function calculateLivePointsFromGWEvents(events: Events, userGWData
 
 
 export function calculateLiveGWPointsForPlayer(events: Events, playerId: number ): number {
-  const playerEvents = events.elements.find(event => event.id === playerId);
+  const playerEvents = events?.elements?.find(event => event?.id === playerId);
 
   if (!playerEvents) return 0;
   const points = playerEvents.explain.reduce((acc, fixture) => {
