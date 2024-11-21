@@ -62,7 +62,7 @@ const CaptainCard: React.FC<CaptainCardProps> = ({
       // data-aos-duration="2000"
     >
       <MdInfoOutline
-        className="absolute top-3 right-3 z-1 text-xl text-icon-green cursor-pointer"
+        className="absolute top-3 right-3 z-10 text-xl text-icon-green cursor-pointer"
         onClick={() => infoClick(playerId, playerElement, managerLeagueData, playerData.round)}
       />
       {/* Team Badge */}

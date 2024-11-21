@@ -64,7 +64,7 @@ export default function Home() {
   const handleSelectLeague = (userId: number | undefined, leagueId: number) => {
     router.push(`/${userId}/${leagueId}`);
     localStorage.setItem("managerData",JSON.stringify(managerData))
-    localStorage.setItem("leagueId",leagueId.toString())
+    // localStorage.setItem("leagueId",leagueId.toString())
   };
 
 
