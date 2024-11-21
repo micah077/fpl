@@ -8,15 +8,19 @@ import "@/app/globals.css";
 import { Manager } from "@/lib/types/Manager";
 import Welcome from "@/components/Welcome/Welcome"; // Ensure this is your new component
 
+import { Inter } from "next/font/google";
 import { MdClose, MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
 import LandingStats from "@/components/Landing-Stats/LandingStats"; // Ensure this is your new component
 import Footer from "@/components/Footer/Footer"; // Ensure this is your new component
 
 
+const inter = Inter({ subsets: ["latin"] });
+
 export default function Home() {
   const [userID, setUserID] = useState<string>("");
   const [managerData, setManagerData] = useState<Manager | null>(null);
   const [isModalOpen, setModalOpen] = useState(false); // State for modal visibility
+  const [isFindModalOpen, setFindModalOpen] = useState(false); // State for modal visibility
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isAtTop, setIsAtTop] = useState(true);
   const [isAtBottom, setIsAtBottom] = useState(false);
@@ -27,6 +31,25 @@ export default function Home() {
   const introRef = useRef<HTMLDivElement>(null);
   const welcomeRef = useRef<HTMLDivElement>(null);
   const landingStatsRef = useRef<HTMLDivElement>(null);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    // Check if the window width is greater than or equal to 640px
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 640);
+    };
+
+    // Set the initial value
+    handleResize();
+
+    // Listen to resize events
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup the event listener on unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setUserID(e.target.value);
@@ -51,6 +74,10 @@ export default function Home() {
     }
   };
 
+  const handleFindUserId = () => {
+      openFindModal();
+  };
+
   const openModal = () => {
     setModalOpen(true);
     document.body.style.overflow = "hidden";
@@ -61,22 +88,33 @@ export default function Home() {
     document.body.style.overflow = "auto";
   };
 
+  const openFindModal = () => {
+    setFindModalOpen(true);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeFindModal = () => {
+    setFindModalOpen(false);
+    document.body.style.overflow = "auto";
+  };
+
+
   const handleSelectLeague = (userId: number | undefined, leagueId: number) => {
     router.push(`/${userId}/${leagueId}`);
     localStorage.setItem("managerData",JSON.stringify(managerData))
-    // localStorage.setItem("leagueId",leagueId.toString())
+
   };
 
 
   const scrollToSection = (direction: "up" | "down") => {
     const scrollY = window.scrollY;
     const windowHeight = window.innerHeight;
-
+  
     const introTop = introRef.current?.offsetTop || 0;
     const welcomeTop = welcomeRef.current?.offsetTop || 0;
     const landingStatsTop = landingStatsRef.current?.offsetTop || 0;
     const landingStatsHeight = landingStatsRef.current?.offsetHeight || 0;
-
+  
     // Scroll down logic
     if (direction === "down") {
       if (scrollY < welcomeTop - windowHeight / 2) {
@@ -87,7 +125,7 @@ export default function Home() {
         landingStatsRef.current?.scrollIntoView({ behavior: "smooth" });
       }
     }
-
+  
     // Scroll up logic
     if (direction === "up") {
       if (scrollY >= landingStatsTop - windowHeight / 2) {
@@ -99,23 +137,23 @@ export default function Home() {
       }
     }
   };
-
+  
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
-
+  
       const landingStatsTop = landingStatsRef.current?.offsetTop || 0;
       const landingStatsHeight = landingStatsRef.current?.offsetHeight || 0;
-
+  
       // Update if we are at the top or bottom
       setIsAtTop(scrollY === 0);
-
+  
       // Disable down button if at the bottom of LandingStats
       const isAtLandingStatsBottom = scrollY + windowHeight >= landingStatsTop + landingStatsHeight;
       setIsAtBottom(isAtLandingStatsBottom);
     };
-
+  
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -123,11 +161,11 @@ export default function Home() {
   // Sort leagues by number of players
   const sortedLeagues =
     managerData?.leagues?.classic
-      .filter((league) => league.rank_count < 25)
+      .filter((league) => league.rank_count < 25  )
       .sort((a, b) => b.rank_count - a.rank_count) || [];
 
   return (
-    <div className={`relative`}>
+    <div className={`${inter.className} relative`}>
       <Head>
         <title>FPL League Insights</title>
         <meta
@@ -139,7 +177,7 @@ export default function Home() {
 
       {/* Intro Section */}
       <div
-        id="intro"
+        id="intro" 
         ref={introRef}
         className="h-screen flex justify-center items-center"
         style={{
@@ -162,13 +200,30 @@ export default function Home() {
               className="w-full flex flex-col md:flex-row items-center gap-5"
               onSubmit={handleGetStarted}
             >
-              <input
-                type="text"
-                placeholder="userID"
-                className="flex-1 w-full md:w-auto py-2 px-4 rounded-lg border border-secondary-green bg-white text-primary-gray focus:outline focus:outline-1 focus:outline-primary-green"
-                value={userID}
-                onChange={handleInputChange}
-              />
+              <div className="relative w-full flex-1">
+                <input
+                  type="text"
+                  placeholder="userID"
+                  className="w-full py-2 px-4 rounded-lg border border-secondary-green bg-white text-primary-gray focus:outline focus:outline-1 focus:outline-primary-green pr-12"
+                  value={userID}
+                  onChange={handleInputChange}
+                />
+                {/* Circle with Question Mark */}
+                <div 
+                  className="absolute top-1/2 transform -translate-y-1/2 right-2 flex items-center justify-center w-8 h-8 bg-primary-gradient rounded-full text-grey-500 cursor-pointer group"
+                  onClick={handleFindUserId}
+                >
+                  <span className="font-bold">?</span>
+                  {/* Tooltip for desktop only */}
+
+                  {/* Conditionally render the tooltip only on desktop using Tailwind hover */}
+                  {isDesktop && (
+                    <span className="absolute w-36 bg-gray-500 text-white text-xs rounded p-1 -top-8 right-1/2 transform translate-x-1/2 z-20 hidden group-hover:block">
+                      How to find your userId
+                    </span>
+                  )}
+                </div>
+              </div>
               <button
                 type="submit"
                 className="py-2 px-4 rounded-lg bg-primary-gradient text-primary-gray"
@@ -176,6 +231,8 @@ export default function Home() {
                 Get Started
               </button>
             </form>
+
+
           </div>
           <p className="text-white text-center">
             Enhancing rivalries, increase competition. Gain insights into your
@@ -194,7 +251,7 @@ export default function Home() {
       <div id="landing-stats" ref={landingStatsRef}>
         <LandingStats />
       </div>
-
+      
       {/* Landing Stats */}
       <Footer />
 
@@ -214,14 +271,70 @@ export default function Home() {
         </div>
       </div>
 
+       {/* Find User ID Popup */}
+       <Popup isOpen={isFindModalOpen} onClose={closeFindModal}>
+        <div
+          className={`w-[90%] sm:w-4/5 lg:w-1/2 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${
+            isFindModalOpen
+              ? "top-[50%] visible opacity-100"
+              : "top-[40%] invisible opacity-0"
+          } transition duration-500`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Popup head */}
+          <div
+            className={
+              "py-3 px-4 rounded-t-lg bg-third-gradient bg-no-repeat bg-right text-primary-gray font-bold flex items-center justify-between"
+            }
+          >
+            <h2>How to find your userId</h2>
+            <MdClose className="text-xl cursor-pointer" onClick={closeFindModal} />
+          </div>
+
+          {/* Popup content */}
+          <div className="h-[75vh] sm:h-[85vh] overflow-auto">
+            <div className="p-4">
+              <div className="flex justify-center items-center mb-4">
+                <Image
+                  src="/HowToFindUserId.png"
+                  alt="How to find your userId"
+                  height={400}
+                  width={500}
+                  className="object-cover rounded-xl max-w-full"
+                />
+              </div>
+              <p>
+                Your userId is a unique identifier that allows us to fetch your
+                FPL data. Here is how you can find it:
+              </p>
+                
+              <ol className="list-decimal list-inside mt-4">
+                <li className="mb-2">
+                  Go to the Fantasy Premier League website and log in.
+                </li>
+                <li className="mb-2">
+                  Click on the points tab.
+                </li>
+                <li className="mb-2">
+                  Your userId is the number in the URL:
+                  https://fantasy.premierleague.com/entry/&lt;userId&gt;/event/5
+                </li>
+              </ol>
+              
+            </div>
+          </div>
+        </div>
+      </Popup>
+
       {/* Modal Component */}
       <Popup isOpen={isModalOpen} onClose={closeModal}>
         {/* Popup */}
         <div
-          className={`w-[90%] md:w-4/5 lg:w-1/2 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${isModalOpen
+          className={`w-[90%] md:w-4/5 lg:w-1/2 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${
+            isModalOpen
               ? "top-[50%] visible opacity-100"
               : "top-[40%] invisible opacity-0"
-            } transition duration-500`}
+          } transition duration-500`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Popup head */}
@@ -259,7 +372,6 @@ export default function Home() {
                     <td className="px-3 py-1">{league.name}</td>
                     <td className="px-3 py-1 text-center">{league.rank_count}</td>
                     <td className="px-3 py-1 text-center">
-                     
                       <button
                         className="px-2 py-1 rounded-md bg-primary-gradient"
                         onClick={() =>
