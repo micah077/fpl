@@ -1,7 +1,7 @@
 "use client";
 import WhiteCard from "@/components/Card/WhiteCard";
 import Header from "@/components/Header/Header";
-import { getManager, getLeague, getBootstrapStatic } from "@/lib/utils/FPLFetch";
+import { getManager, getLeague, getBootstrapStatic, getGWEvents } from "@/lib/utils/FPLFetch";
 import CaptainsView from "@/components/Captain/CaptainsView";
 import TransferInOut from "@/components/Transfer/TransferInOut";
 import TransferStats from "@/components/Transfer/TransferStats";
@@ -30,12 +30,8 @@ const Page = ({
 }) => {
   const [managerData, setManagerData] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: footballPerson,
+  const [gwEvents, setGWEvents] = useState<any>([])
 
-  }
   const fetchManager = async (managerId: string) => {
     const BASE_URL =
       process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
@@ -63,11 +59,16 @@ const Page = ({
       })
       document.body.classList.add("hide-scrollbar");
       setTimeout(async () => {
-        const data = await fetchManager(params.managerId);
-        document.body.classList.remove("hide-scrollbar");
+        const [data, data2] = await Promise.all([
+          fetchManager(params.managerId),
+          fetchGWEvent()
+        ]);
+        
         setManagerData(data);
+        setGWEvents(data2);
+        document.body.classList.remove("hide-scrollbar");
         // localStorage.removeItem("leagueId")
-        localStorage.setItem("managerData",JSON.stringify(data))
+        localStorage.setItem("managerData", JSON.stringify(data))
         window.scroll({
           top: 0,
           behavior: "instant"
@@ -93,9 +94,28 @@ const Page = ({
 
   }, [])
 
+  const fetchGWEvent = async () => {
+    const BASE_URL =
+      process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
+
+    try {
+
+      const res = await fetch(
+        `${NEXT_API_BASE_URL}/getGWEventAPI`
+      );
+
+      const data = await res.json();
+
+      return data
+    } catch (error) {
+      console.error("Error fetching value:", error);
+    }
+  };
+
   return (
     <>
-      {isLoading &&  <div className="absolute w-screen z-50 top-[140px] h-full bg-white flex justify-center items-center">
+      {isLoading && <div className="absolute w-screen z-50 top-[140px] h-full bg-white flex justify-center items-center">
         <img src={footballPlayer.src} className="h-[400px] w-[400px]" alt="Loading..." />
       </div>
       }
@@ -125,7 +145,7 @@ const Page = ({
               </div>
               <SquareAd imgUrl="/ad2.png" />
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-                <LiveEvents leagueId={params.leagueId} />
+                <LiveEvents leagueId={params.leagueId} gwEvents={gwEvents} />
                 <TeamValue leagueId={params.leagueId} />
               </div>
               <SquareAd imgUrl="/ad3.png" />

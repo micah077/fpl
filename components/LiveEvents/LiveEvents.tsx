@@ -8,16 +8,66 @@ import Popup from "../Modals/Popup";
 import PlayerDetail from "../Common/PlayerDetail";
 import { getImageLink } from "@/lib/utils/FPLFetch";
 import { Element } from "@/lib/types/FPLStatic";
+import { calculateLiveGWPointsForPlayer } from "@/lib/utils/FPLHelper";
+import { Events } from "@/lib/types/FPLEvents";
+import { Switch, FormControlLabel } from "@mui/material";
 
-const LiveEvents = ({ leagueId }: { leagueId: string }) => {
+const LiveEvents = ({ leagueId, gwEvents }: { leagueId: string, gwEvents: Events }) => {
   const [isModalOpen, setModalOpen] = useState(false); // State for modal visibility
   const [isMoreModalOpen, setMoreModalOpen] = useState(false); // State for modal visibility
   const [isFromMoreModal, setFromMoreModal] = useState(false); // State for modal controlling
   const [leagueEvent, setLeagueEvent] = useState<FPLLeagueEvents[]>([]); // State for player data
   const [selectedPlayer, setSelectedPlayer] = useState<Element>(); // State for selected player
   const [ownedUsers, setownedUsers] = useState<FPLResult[]>();
+  const [excludeMinutes, setExcludeMinutes] = useState(true); // State for Radio Button
+  const [displayedEvents, setDisplayedEvents] = useState<FPLLeagueEvents[]>([]); // State for displayed events
+
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<boolean>(false);
+
+
+  const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.checked,'event.target.checked')
+    if (event.target.checked) {
+      setDisplayedEvents(leagueEvent.filter((event) => event.identifier !== "minutes"));
+    } else {
+      setDisplayedEvents(leagueEvent);
+    }
+    setExcludeMinutes(event.target.checked);
+  };
+
+  enum Identifier {
+    Minutes = "minutes",
+    GoalsScored = "goals_scored",
+    Assists = "assists",
+    CleanSheets = "clean_sheets",
+    GoalsConceded = "goals_conceded",
+    OwnGoals = "own_goals",
+    PenaltiesSaved = "penalties_saved",
+    PenaltiesMissed = "penalties_missed",
+    YellowCards = "yellow_cards",
+    RedCards = "red_cards",
+    Saves = "saves",
+    Bonus = "bonus",
+
+  }
+  
+  const identifierLabels: Record<Identifier, string> = {
+    [Identifier.Minutes]: "Minutes",
+    [Identifier.GoalsScored]: "Goals Scored",
+    [Identifier.Assists]: "Assists",
+    [Identifier.CleanSheets]: "Clean Sheets",
+    [Identifier.GoalsConceded]: "Goals Conceded",
+    [Identifier.OwnGoals]: "Own Goals",
+    [Identifier.PenaltiesSaved]: "Penalties Saved",
+    [Identifier.PenaltiesMissed]: "Penalties Missed",
+    [Identifier.YellowCards]: "Yellow Cards",
+    [Identifier.RedCards]: "Red Cards",
+    [Identifier.Saves]: "Saves",
+    [Identifier.Bonus]: "Bonus",
+
+  };
 
 
   const openModal = (currentPlayerData: Element, ownedPlayers: FPLResult[]) => {
@@ -63,7 +113,7 @@ const LiveEvents = ({ leagueId }: { leagueId: string }) => {
       const data: FPLLeagueEvents[] = await res.json();
 
       setLeagueEvent(data);
-
+      setDisplayedEvents(data.filter((event) => event.identifier != "minutes"));
 
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -179,6 +229,38 @@ const LiveEvents = ({ leagueId }: { leagueId: string }) => {
   return (
     <div className="col-span-3">
       <MainCard error={error} loader={isLoading} onRefresh={()=>fetchData()} title={`Live Events`}>
+      <div className="relative">
+
+      <div className="absolute -top-12 right-24 mt-2 mr-2 z-10">
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={excludeMinutes}
+                  onChange={handleSwitchChange}
+                  sx={{
+                    "& .MuiSwitch-switchBase.Mui-checked": {
+                      color: "#00ff87",
+                    },
+                    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                      backgroundColor: "#00ff87",
+                    },
+                    // Add mobile-specific optimizations
+                    "@media (max-width: 600px)": {
+                      "& .MuiSwitch-switchBase": {
+                        // Simplify styles for better mobile performance
+                        boxShadow: "none",
+                        transform: "scale(0.8)", // Reduce size for mobile
+                      },
+                      "& .MuiSwitch-track": {
+                        backgroundColor: "#e0e0e0", // Use simpler colors for track on mobile
+                      },
+                    },
+                  }}
+                />
+              }
+              label="Exclude Minutes"
+            />
+          </div>
         <div className="overflow-auto">
           <table className="w-full">
             <thead className="text-sm text-primary-gray">
@@ -197,11 +279,13 @@ const LiveEvents = ({ leagueId }: { leagueId: string }) => {
                 <th className="px-4 py-2 border-r border-off-white">
                   Event
                 </th>
+                <th className="px-4 py-2 border-r border-off-white">GW Points</th>
+
                 <th className="px-4 py-2">Info</th>
               </tr>
             </thead>
             <tbody className="text-sm text-secondary-gray text-center font-medium">
-              {Array.isArray(leagueEvent) && leagueEvent?.slice(0, 6).map((event, index) => (
+              {Array.isArray(displayedEvents) && displayedEvents?.slice(0, 6).map((event, index) => (
                 <tr
                   className="border-b border-off-white relative"
                   key={event.playerId + "-" + index}
@@ -234,7 +318,10 @@ const LiveEvents = ({ leagueId }: { leagueId: string }) => {
                     </div>
                   </td>
                   <td className="px-4 py-2">{event.points}</td>
-                  <td className="px-4 py-2 text-left">{event.identifier}</td>
+                  
+                  <td className="px-4 py-2 text-center">{identifierLabels[event?.identifier as Identifier]}</td>
+                  <td className="px-4 py-2">{calculateLiveGWPointsForPlayer(gwEvents, Number(event?.playerId))}</td>
+
                   <td className="px-4 py-2">
                     <div className="flex justify-center items-center">
                       <MdInfoOutline
@@ -249,7 +336,7 @@ const LiveEvents = ({ leagueId }: { leagueId: string }) => {
             </tbody>
           </table>
         </div>
-        {sortedData?.length > 5 && (
+        {displayedEvents.length > 5 && (
           <div className="flex justify-end items-center my-3 px-6">
             <button
               className="text-sm text-primary-gray font-medium flex items-center gap-1"
@@ -259,8 +346,8 @@ const LiveEvents = ({ leagueId }: { leagueId: string }) => {
             </button>
           </div>
         )}
+</div>
       </MainCard>
-
       {/* Modal Component */}
       <Popup isOpen={isModalOpen} onClose={closeModal}>
         {/* Popup */}
@@ -319,11 +406,14 @@ const LiveEvents = ({ leagueId }: { leagueId: string }) => {
                     <th className="px-4 py-2 border-r border-off-white">
                       Event
                     </th>
+                    <th className="px-4 py-2 border-r border-off-white">
+                    GW Points	
+                    </th>
                     <th className="px-4 py-2">Info</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm text-secondary-gray text-center font-medium">
-                  {leagueEvent?.length > 0 && leagueEvent?.map((event, index) => (
+                  {displayedEvents?.length > 0 && displayedEvents?.map((event, index) => (
                     <tr
                       className="border-b border-off-white relative"
                       key={event.playerId + "-" + index}
@@ -360,7 +450,8 @@ const LiveEvents = ({ leagueId }: { leagueId: string }) => {
                         </div>
                       </td>
                       <td className="px-4 py-2">{event.points}</td>
-                      <td className="px-4 py-2 text-left">{event.identifier}</td>
+                      <td className="px-4 py-2 text-left">{identifierLabels[event?.identifier as Identifier]}</td>
+                      <td className="px-4 py-2">{calculateLiveGWPointsForPlayer(gwEvents, Number(event?.playerId))}</td>
                       <td className="px-4 py-2">
                         <div className="flex justify-center items-center">
                           <MdInfoOutline
