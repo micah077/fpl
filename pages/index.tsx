@@ -256,7 +256,7 @@ export default function Home() {
                 {sortedLeagues.map((league) => (
                   <tr className="border-b border-off-white" key={league.id}>
                     <td className="px-3 py-1">{league.name}</td>
-                    <td className="px-3 py-1">{league.rank_count}</td>
+                    <td className="px-3 py-1 text-center">{league.rank_count}</td>
                     <td className="px-3 py-1 text-center">
                       <button
                         className="px-2 py-1 rounded-md bg-primary-gradient"
