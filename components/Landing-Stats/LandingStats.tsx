@@ -125,7 +125,7 @@ const scrollToTop = () => {
 
 const LandingStats: React.FC = () => {
   return (
-    <section className="h-screen py-8 bg-fifth-gradient bg-no-repeat bg-right-top">
+    <section className="sm:h-screen py-8 bg-fifth-gradient bg-no-repeat bg-right-top">
         <div className="max-w-7xl mx-auto text-center">
             <h2 className="text-4xl font-bold mb-8">All-in-one FPL insights for your League</h2>
         </div>
