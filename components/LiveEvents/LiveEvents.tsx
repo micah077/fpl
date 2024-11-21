@@ -231,7 +231,7 @@ const LiveEvents = ({ leagueId, gwEvents }: { leagueId: string, gwEvents: Events
       <MainCard error={error} loader={isLoading} onRefresh={()=>fetchData()} title={`Live Events`}>
       <div className="relative">
 
-      <div className="absolute -top-12 right-24 mt-2 mr-2 z-10">
+          <div className="hidden md:inline absolute -top-12 right-24 mt-2 mr-2 z-10">
             <FormControlLabel
               control={
                 <Switch
@@ -261,6 +261,40 @@ const LiveEvents = ({ leagueId, gwEvents }: { leagueId: string, gwEvents: Events
               label="Exclude Minutes"
             />
           </div>
+
+
+          {/* mobile switch */}
+          <div className="md:hidden w-full flex justify-center mt-2 mr-2">
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={excludeMinutes}
+                  onChange={handleSwitchChange}
+                  sx={{
+                    "& .MuiSwitch-switchBase.Mui-checked": {
+                      color: "#00ff87",
+                    },
+                    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                      backgroundColor: "#00ff87",
+                    },
+                    // Add mobile-specific optimizations
+                    "@media (max-width: 600px)": {
+                      "& .MuiSwitch-switchBase": {
+                        // Simplify styles for better mobile performance
+                        boxShadow: "none",
+                        transform: "scale(0.8)", // Reduce size for mobile
+                      },
+                      "& .MuiSwitch-track": {
+                        backgroundColor: "#e0e0e0", // Use simpler colors for track on mobile
+                      },
+                    },
+                  }}
+                />
+              }
+              label="Exclude Minutes"
+            />
+          </div>
+          {/* mobile switch end */}
         <div className="overflow-auto">
           <table className="w-full">
             <thead className="text-sm text-primary-gray">
