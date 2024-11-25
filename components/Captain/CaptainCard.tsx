@@ -62,7 +62,7 @@ const CaptainCard: React.FC<CaptainCardProps> = ({
       // data-aos-duration="2000"
     >
       <MdInfoOutline
-        className="absolute top-3 right-3 z-10 text-xl text-icon-green cursor-pointer"
+        className="absolute top-3 right-3 z-20 text-xl text-icon-green cursor-pointer"
         onClick={() => infoClick(playerId, playerElement, managerLeagueData, playerData.round)}
       />
       {/* Team Badge */}
@@ -82,7 +82,7 @@ const CaptainCard: React.FC<CaptainCardProps> = ({
       {/* Team Badge */}
       {/* Player Image */}
       <div className="w-full h-full flex justify-end relative z-1">
-        <div className="w-3/4 h-full absolute bottom-0">
+        <div className="w-3/4 z-10 h-full absolute bottom-0">
           <Image
             src={captainPhoto}
             alt={playerName || "Captain Photo"}
@@ -93,7 +93,7 @@ const CaptainCard: React.FC<CaptainCardProps> = ({
             }}
           />
         </div>
-        <div className="w-full h-16 absolute bottom-0 bg-gradient-to-t from-white to-transparent"></div>
+        <div className="w-full  h-16 absolute bottom-0 bg-gradient-to-t from-white to-transparent"></div>
       </div>
       {/* Player Image */}
       {/* Player Name */}
