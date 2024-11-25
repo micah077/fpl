@@ -67,7 +67,7 @@ const CaptainCard: React.FC<CaptainCardProps> = ({
       />
       {/* Team Badge */}
       <div className="w-full h-36 flex justify-end absolute top-0 left-0 z-1">
-        <div className="w-full h-full relative opacity-20">
+        <div className="w-full h-full relative opacity-20"> 
           <Image
             src={teamBadge}
             alt={`${playerName} team badge`  || "Team Badge"}
