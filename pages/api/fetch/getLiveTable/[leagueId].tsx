@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const userIds = leagueData.standings.results.map(result => result.entry);
         const currentGameweek = staticData?.events?.find(event => event.is_current)?.id || 1;
-        
+
         const [gwEvents, gwFixtures, managerInsights] = await Promise.all([
             getGWEvents(currentGameweek.toString()),
             getGWFixtures(currentGameweek.toString()),
@@ -65,17 +65,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return gwFixtureBonusPoint as BonusScores;
         }));
 
-        const enrichedBonusScoresArray = gwBonusPoints.map(bonusScores => 
-            bonusScores.bonusScores.map(score => ({
-                ...score,
-                player: staticData.elements.find(player => player.id === score.playerId)
-            }))
-        );
+
+        // fixed enrichedBonusScoresArray some bonusScores were null that's why it was crashing
+        const enrichedBonusScoresArray = gwBonusPoints
+            .filter(bonusScores => bonusScores !== null)
+            .map(bonusScores =>
+                bonusScores.bonusScores.map(score => ({
+                    ...score,
+                    player: staticData.elements.find(player => player.id === score.playerId),
+                }))
+            );
+
+
 
         const managerDataPromises = userIds.map(async userId => {
             const userGWdata = await getUserGWData(userId.toString(), currentGameweek.toString());
 
-            const userGWEvents = gwEvents.elements.filter(event => 
+            const userGWEvents = gwEvents.elements.filter(event =>
                 userGWdata.picks.map(pick => pick.element).includes(event.id)
             );
 
@@ -87,10 +93,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             );
 
             const playersStarted = userGWEvents.filter(event => {
-                const userGWDataStarting = userGWdata.picks.filter(pick => 
+                const userGWDataStarting = userGWdata.picks.filter(pick =>
                     pick?.element === event.id && pick.position <= 11
                 );
-                
+
                 const minutes = event.explain[0].stats.find(stat => stat.identifier === 'minutes');
                 const fixtureStarted = gwBonusPoints.find(bonusPoint => bonusPoint?.fixtureId === event.explain[0].fixture);
 
