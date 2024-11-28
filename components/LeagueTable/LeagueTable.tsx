@@ -148,144 +148,144 @@ const LeagueTable = ({ leagueId }: { leagueId: string }) => {
   return (
     <div className="col-span-2">
       <MainCard error={isError} onRefresh={() => fetchData()} loader={loader} title={`Live League Table`}>
-        
-        
-        
-        
-        
-        
-        
-        
-      <div className="overflow-x-auto">
-  <table className="min-w-full">
-    <thead className="text-sm text-primary-gray">
-      <tr className="shadow-primary">
-        <th className="px-4 py-2 border-r border-off-white text-left">Rank</th>
-        <th className="px-4 py-2 border-r border-off-white text-left min-w-[200px]">Full Name</th>
-        <th className="px-4 py-2 border-r border-off-white text-left min-w-[200px]">Username</th>
-        <th className="px-4 py-2 border-r border-off-white text-center">GW</th>
-        <th className="px-4 py-2 border-r border-off-white text-center">Score</th>
-        <th className="px-4 py-2 border-r border-off-white text-center">GW Bonus</th>
-        <th className="px-4 py-2 border-r border-off-white text-left min-w-[150px]">Top Player</th>
-        <th className="px-4 py-2 border-r border-off-white text-center">Players left</th>
-        <th className="px-4 py-2 border-r border-off-white text-left">Avg. PPP</th>
-        <th className="px-4 py-2 text-center">Info</th>
-      </tr>
-    </thead>
 
-    <tbody className="text-sm text-secondary-gray text-center font-medium">
-      {leagueData?.standings.results.slice(0, 3).map((manager, index) => (
-        <tr key={index}>
-          <td className="py-2 border-r border-off-white">
-            {index + 1 < manager.last_rank ? (
-              <div className="ml-4 flex items-center">
-                <div className="w-4 h-4 rounded-full bg-green-400 flex items-center justify-center text-white">
-                  <FaLongArrowAltUp className="text-lg" />
-                </div>
-                <span className="ml-2">{index + 1}</span>
-              </div>
-            ) : index + 1 > manager.last_rank ? (
-              <div className="ml-4 flex items-center">
-                <div className="w-4 h-4 rounded-full bg-red-400 flex items-center justify-center text-white">
-                  <FaLongArrowAltDown className="text-lg" />
-                </div>
-                <span className="ml-2">{index + 1}</span>
-              </div>
-            ) : (
-              <div className="ml-4 flex items-center">
-                <div className="w-4 h-4 rounded-full bg-slate-200 flex items-center justify-center text-white"></div>
-                <span className="ml-2">{index + 1}</span>
-              </div>
-            )}
-          </td>
 
-          <td className="px-2 py-2 border-r border-off-white text-left min-w-[200px]">
-            <div className="flex items-center">
-              {enrichedManagerInsights?.find(managerData => managerData.id === manager.entry)?.countryImgSrc && (
-                <Image
-                  src={enrichedManagerInsights?.find(managerData => managerData.id === manager.entry)?.countryImgSrc as string}
-                  alt={manager.player_name || "Country img"}
-                  width={30}
-                  height={30}
-                  className="rounded-full object-cover h-6 w-6 mr-2"
-                />
-              )}
-              <span>{manager.player_name}</span>
-            </div>
-          </td>
 
-          <td className="px-2 py-2 border-r border-off-white text-left min-w-[200px]">
-            <div className="flex items-center">
-              {enrichedManagerInsights?.find(managerData => managerData.id === manager.entry)?.favourite_team_badge && (
-                <Image
-                  src={enrichedManagerInsights?.find(managerData => managerData.id === manager.entry)?.favourite_team_badge as string}
-                  alt={manager.player_name || "favorite team badge"}
-                  width={30}
-                  height={30}
-                  className="rounded-full object-cover h-6 w-6 mr-2"
-                />
-              )}
-              <span>{manager.entry_name}</span>
-            </div>
-          </td>
 
-          <td className="px-4 py-2 border-r border-off-white">{managerData?.find(managerData => managerData.userId === manager.entry)?.gwPoints}</td>
-          <td className="px-4 py-2 border-r border-off-white">{managerData?.find(managerData => managerData.userId === manager.entry)?.totalPoints}</td>
-          <td className="px-4 py-2 border-r border-off-white">
-            {managerData?.find(managerData => managerData.userId === manager.entry)?.userBonusPlayers.reduce((acc, bonus) => acc + bonus.value, 0)}
-          </td>
 
-          <td className="px-4 py-2 border-r border-off-white text-left min-w-[150px]">
-            <div className="relative flex items-center">
-              {userPlayerPoints && (() => {
-                const playerPoints = userPlayerPoints.find(playerPoints => playerPoints.userId === manager?.entry);
 
-                if (playerPoints && playerPoints.userPlayerPoint[0].player?.photo) {
-                  return (
-                    <div className="w-10 h-10 rounded-full relative">
-                      <Image
-                        src={getImageLink(playerPoints.userPlayerPoint[0].player?.photo)}
-                        alt={playerPoints.userPlayerPoint[0].player?.web_name || "best player"}
-                        width={40}
-                        height={40}
-                        className="w-10 h-10 object-cover rounded-full max-w-max"
+
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead className="text-sm text-primary-gray">
+              <tr className="shadow-primary">
+                <th className="px-4 py-2 border-r border-off-white text-left">Rank</th>
+                <th className="px-4 py-2 border-r border-off-white text-left min-w-[200px]">Full Name</th>
+                <th className="px-4 py-2 border-r border-off-white text-left min-w-[200px]">Username</th>
+                <th className="px-4 py-2 border-r border-off-white text-center">GW</th>
+                <th className="px-4 py-2 border-r border-off-white text-center">Score</th>
+                <th className="px-4 py-2 border-r border-off-white text-center">GW Bonus</th>
+                <th className="px-4 py-2 border-r border-off-white text-left min-w-[150px]">Top Player</th>
+                <th className="px-4 py-2 border-r border-off-white text-center">Players left</th>
+                <th className="px-4 py-2 border-r border-off-white text-left">Avg. PPP</th>
+                <th className="px-4 py-2 text-center">Info</th>
+              </tr>
+            </thead>
+
+            <tbody className="text-sm text-secondary-gray text-center font-medium">
+              {leagueData?.standings.results.slice(0, 3).map((manager, index) => (
+                <tr key={index}>
+                  <td className="py-2 border-r border-off-white">
+                    {index + 1 < manager.last_rank ? (
+                      <div className="ml-4 flex items-center">
+                        <div className="w-4 h-4 rounded-full bg-green-400 flex items-center justify-center text-white">
+                          <FaLongArrowAltUp className="text-lg" />
+                        </div>
+                        <span className="ml-2">{index + 1}</span>
+                      </div>
+                    ) : index + 1 > manager.last_rank ? (
+                      <div className="ml-4 flex items-center">
+                        <div className="w-4 h-4 rounded-full bg-red-400 flex items-center justify-center text-white">
+                          <FaLongArrowAltDown className="text-lg" />
+                        </div>
+                        <span className="ml-2">{index + 1}</span>
+                      </div>
+                    ) : (
+                      <div className="ml-4 flex items-center">
+                        <div className="w-4 h-4 rounded-full bg-slate-200 flex items-center justify-center text-white"></div>
+                        <span className="ml-2">{index + 1}</span>
+                      </div>
+                    )}
+                  </td>
+
+                  <td className="px-2 py-2 border-r border-off-white text-left min-w-[200px]">
+                    <div className="flex items-center">
+                      {enrichedManagerInsights?.find(managerData => managerData.id === manager.entry)?.countryImgSrc && (
+                        <Image
+                          src={enrichedManagerInsights?.find(managerData => managerData.id === manager.entry)?.countryImgSrc as string}
+                          alt={manager.player_name || "Country img"}
+                          width={30}
+                          height={30}
+                          className="rounded-full object-cover h-6 w-6 mr-2"
+                        />
+                      )}
+                      <span>{manager.player_name}</span>
+                    </div>
+                  </td>
+
+                  <td className="px-2 py-2 border-r border-off-white text-left min-w-[200px]">
+                    <div className="flex items-center">
+                      {enrichedManagerInsights?.find(managerData => managerData.id === manager.entry)?.favourite_team_badge && (
+                        <Image
+                          src={enrichedManagerInsights?.find(managerData => managerData.id === manager.entry)?.favourite_team_badge as string}
+                          alt={manager.player_name || "favorite team badge"}
+                          width={30}
+                          height={30}
+                          className="rounded-full object-cover h-6 w-6 mr-2"
+                        />
+                      )}
+                      <span>{manager.entry_name}</span>
+                    </div>
+                  </td>
+
+                  <td className="px-4 py-2 border-r border-off-white">{managerData?.find(managerData => managerData.userId === manager.entry)?.gwPoints}</td>
+                  <td className="px-4 py-2 border-r border-off-white">{managerData?.find(managerData => managerData.userId === manager.entry)?.totalPoints}</td>
+                  <td className="px-4 py-2 border-r border-off-white">
+                    {managerData?.find(managerData => managerData.userId === manager.entry)?.userBonusPlayers.reduce((acc, bonus) => acc + bonus.value, 0)}
+                  </td>
+
+                  <td className="px-4 py-2 border-r border-off-white text-left min-w-[150px]">
+                    <div className="relative flex items-center">
+                      {userPlayerPoints && (() => {
+                        const playerPoints = userPlayerPoints.find(playerPoints => playerPoints.userId === manager?.entry);
+
+                        if (playerPoints && playerPoints.userPlayerPoint[0].player?.photo) {
+                          return (
+                            <div className="w-10 h-10 rounded-full relative">
+                              <Image
+                                src={getImageLink(playerPoints.userPlayerPoint[0].player?.photo)}
+                                alt={playerPoints.userPlayerPoint[0].player?.web_name || "best player"}
+                                width={40}
+                                height={40}
+                                className="w-10 h-10 object-cover rounded-full max-w-max"
+                              />
+                            </div>
+                          );
+                        }
+                        return "";
+                      })()}
+                      <span className="text-base ml-4">
+                        {userPlayerPoints?.find(playerPoints => playerPoints?.userId === manager?.entry)?.userPlayerPoint[0]?.player?.web_name || 'Unknown Player'}
+                      </span>
+                      <div className="absolute top-0 -right-2 bg-third-gradient text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full opacity-70">
+                        {userPlayerPoints?.find(playerPoints => playerPoints?.userId === manager?.entry)?.userPlayerPoint[0]?.points}
+                      </div>
+                    </div>
+                  </td>
+
+                  <td className="px-4 py-2 border-r border-off-white">
+                    {11 - (managerData?.find(managerData => managerData.userId === manager.entry)?.numberOfPlayersStarted ?? 0)}
+                  </td>
+
+                  <td className="px-4 py-2 border-r border-off-white text-left">
+                    {((managerData?.find(managerData => managerData.userId === manager.entry)?.gwPoints || 0) /
+                      (managerData?.find(managerData => managerData.userId === manager.entry)?.numberOfPlayersStarted || 1)).toFixed(1)}
+                  </td>
+
+                  <td className="px-4 py-2 text-center">
+                    <div className="flex justify-center items-center">
+                      <MdInfoOutline
+                        className="text-lg text-icon-green cursor-pointer"
+                        onClick={() => openInfoModal(manager)}
                       />
                     </div>
-                  );
-                }
-                return "";
-              })()}
-              <span className="text-base ml-4">
-                {userPlayerPoints?.find(playerPoints => playerPoints?.userId === manager?.entry)?.userPlayerPoint[0]?.player?.web_name || 'Unknown Player'}
-              </span>
-              <div className="absolute top-0 -right-2 bg-third-gradient text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full opacity-70">
-                {userPlayerPoints?.find(playerPoints => playerPoints?.userId === manager?.entry)?.userPlayerPoint[0]?.points}
-              </div>
-            </div>
-          </td>
-
-          <td className="px-4 py-2 border-r border-off-white">
-            {11 - (managerData?.find(managerData => managerData.userId === manager.entry)?.numberOfPlayersStarted ?? 0)}
-          </td>
-
-          <td className="px-4 py-2 border-r border-off-white text-left">
-            {((managerData?.find(managerData => managerData.userId === manager.entry)?.gwPoints || 0) /
-              (managerData?.find(managerData => managerData.userId === manager.entry)?.numberOfPlayersStarted || 1)).toFixed(1)}
-          </td>
-
-          <td className="px-4 py-2 text-center">
-            <div className="flex justify-center items-center">
-              <MdInfoOutline
-                className="text-lg text-icon-green cursor-pointer"
-                onClick={() => openInfoModal(manager)}
-              />
-            </div>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {leagueData?.standings.results && leagueData?.standings.results?.length && leagueData?.standings.results.length > 3 && (
           <div className="flex justify-end items-center my-3 px-6">
@@ -328,12 +328,12 @@ const LeagueTable = ({ leagueId }: { leagueId: string }) => {
                 <thead className="text-sm text-primary-gray">
                   <tr className="shadow-primary">
                     <th className="px-4 py-2 border-r border-off-white text-left">Rank</th>
-                    <th className="px-4 py-2 border-r border-off-white text-left">Full Name</th>
-                    <th className="px-4 py-2 border-r border-off-white text-left">Username</th>
+                    <th className="px-4 py-2 border-r border-off-white text-left min-w-[200px] ">Full Name</th>
+                    <th className="px-4 py-2 border-r border-off-white text-left min-w-[200px]">Username</th>
                     <th className="px-4 py-2 border-r border-off-white">GW</th>
                     <th className="px-4 py-2 border-r border-off-white">Score</th>
                     <th className="px-4 py-2 border-r border-off-white">GW Bonus</th>
-                    <th className="px-4 py-2 border-r border-off-white text-left">Top Player</th>
+                    <th className="px-4 py-2 border-r border-off-white text-left min-w-[150px]">Top Player</th>
                     <th className="px-4 py-2 border-r border-off-white">Players left</th>
                     <th className="px-4 py-2 border-r border-off-white text-left">Avg. PPP</th>
                     <th className="px-4 py-2 border-r border-off-white text-left">Info</th>
