@@ -246,13 +246,20 @@ const TransferInOut = ({
                     </td>
                     <td className="px-4 py-2">{details.users.length}</td>
                     <td className="px-4 py-2">
-                      <div className="relative group w-fit flex justify-center items-center">
+                      <div className="relative group w-fit flex justify-center items-center"
+                        onMouseEnter={() => {
+                          setShowInfo(index);
+                        }}
+                        onMouseLeave={() => {
+                          setShowInfo(null)
+                        }}
+                      >
                         <MdInfoOutline
                           className="text-lg group text-icon-green cursor-pointer"
                         />
 
                         <ul
-                          className={`group-hover:inline min-w-[150px] hidden bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute top-5 right-6  z-10 `}
+                          className={`group-hover:inline min-w-[150px] hidden bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute right-6  z-10 ${showInfo === transfers.length - 1 ? "bottom-2" : "top-2"}`}
                         >
                           {details.users.map((user, idx) => (
                             <li key={idx}>{user}</li>
