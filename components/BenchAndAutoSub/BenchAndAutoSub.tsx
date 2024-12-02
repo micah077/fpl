@@ -33,7 +33,7 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
     width: divRef?.current?.offsetWidth,
     height: 325,
   });
-  
+
   const [isModalOpen, setModalOpen] = useState(false); // State for modal visibility
   const [poBAutoSub, setPoBAutoSub] = useState<PoBAutoSubs[]>([]); // State for bench data
   const [graphData, setGraphData] = useState<graphData[]>([]); // State for graph data
@@ -80,12 +80,12 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
 
   const CustomTooltip = (props: any) => {
     const { payload, label, active } = props;
-    
+
     if (active && payload && payload?.length) {
       return (
         <div className="bg-light-black text-off-white text-sm p-4 rounded-md">
           <p className="mb-1">{payload[0]?.payload?.name}</p>
-          <p  className="text-xs capitalize text-[#20FECD]">
+          <p className="text-xs capitalize text-[#20FECD]">
             Points on Bench: <span>{payload[0].value}</span>
           </p>
           <p className="text-xs capitalize text-[#FFC107]">
@@ -100,10 +100,13 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
 
   // Fetching data
   useEffect(() => {
-    
-  
+
+
     if (leagueId) {
-      fetchData(); // Fetch data only if leagueId exists
+      fetchData();
+      setTimeout(() => {
+        fetchData();
+      }, 4000);
     }
   }, [leagueId]); // Ensure the effect triggers only when leagueId changes
 
@@ -111,39 +114,39 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
     const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
     const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
 
-      try {
-        setIsLoading(true)
-        setError(false)
-        const res = await fetch(`${NEXT_API_BASE_URL}/getPoBAndAutoSub/${leagueId}`);
-        if (!res.ok) {
-          throw new Error(`Error fetching transfer stats: ${res.statusText}`);
-        }
-        const data: PoBAutoSubs[] = await res.json()
-        
-        setPoBAutoSub(data); // Update state with sorted data
-
-        // Create graph data
-        const graphData = data.map((item) => {
-          return {
-            name: item.player_name,
-            points_on_bench: item.pointsOnBench.reduce((acc, curr) => acc + curr.elementGWdata.total_points, 0),
-            auto_sub: item.autoSubs.reduce((acc, curr) => acc + curr.elementIn.elementGWdata.total_points , 0),
-            manager_id: item.userId
-          };
-        }); 
-        const sortedData = graphData.slice().sort((a, b) => b.points_on_bench - a.points_on_bench);
-
-
-        setGraphData(sortedData);
-
-      } catch (error) {
-        console.error("Error fetching transfer data:", error);
-        setError(true)
-      }finally {
-        setIsLoading(false)
+    try {
+      setIsLoading(true)
+      setError(false)
+      const res = await fetch(`${NEXT_API_BASE_URL}/getPoBAndAutoSub/${leagueId}`);
+      if (!res.ok) {
+        throw new Error(`Error fetching transfer stats: ${res.statusText}`);
       }
+      const data: PoBAutoSubs[] = await res.json()
 
+      setPoBAutoSub(data); // Update state with sorted data
+
+      // Create graph data
+      const graphData = data.map((item) => {
+        return {
+          name: item.player_name,
+          points_on_bench: item.pointsOnBench.reduce((acc, curr) => acc + curr.elementGWdata.total_points, 0),
+          auto_sub: item.autoSubs.reduce((acc, curr) => acc + curr.elementIn.elementGWdata.total_points, 0),
+          manager_id: item.userId
+        };
+      });
+      const sortedData = graphData.slice().sort((a, b) => b.points_on_bench - a.points_on_bench);
+
+
+      setGraphData(sortedData);
+
+    } catch (error) {
+      console.error("Error fetching transfer data:", error);
+      setError(true)
+    } finally {
+      setIsLoading(false)
     }
+
+  }
 
   // Create a copy of the data array and sort it in descending order based on point
 
@@ -164,26 +167,25 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
   const handlePrevClick = () => {
     if (divRef.current && barWidth) {
       divRef.current.scrollBy({ left: -barWidth, behavior: "smooth" });
-      
+
     }
   };
 
   const handleNextClick = () => {
     if (divRef.current && barWidth) {
       divRef.current.scrollBy({ left: barWidth, behavior: "smooth" });
-      
+
     }
   };
 
   const updateScrollButtons = () => {
     if (divRef.current) {
-      
+
       const { scrollLeft, scrollWidth, clientWidth } = divRef.current;
 
       setScrollLeft(scrollLeft); // Update left scroll position
       //  setCanScrollRight(scrollLeft + clientWidth < scrollWidth); // Check if we can scroll right
-      if ( scrollWidth <= (scrollLeft + clientWidth) + 20 ) {
-        
+      if (scrollWidth <= (scrollLeft + clientWidth) + 20) {
         setCanScrollRight(false);
       } else {
         setCanScrollRight(true);
@@ -194,7 +196,7 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
 
   useEffect(() => {
     const updateChartDimensions = () => {
-      if (divRef.current ) {
+      if (divRef.current) {
         let width;
         if (graphData?.length > 10) {
           const count = graphData?.length - 10;
@@ -221,11 +223,11 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
   }, [graphData]);
 
 
-  
+
 
   return (
     <div className="w-full lg:w-3/4">
-      <MainCard  error={error} loader={isLoading} onRefresh={()=>fetchData()} title={`Point of bench and auto sub`}>
+      <MainCard error={error} loader={isLoading} onRefresh={() => fetchData()} title={`Point of bench and auto sub`}>
         <div className="flex-1 relative">
           <div className="w-full flex justify-center gap-3 mt-3">
             <div className="flex items-center gap-1">
@@ -329,11 +331,10 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
       <Popup isOpen={isModalOpen} onClose={closeModal}>
         {/* Popup */}
         <div
-          className={`w-[90%] md:w-[65%] lg:w-2/5 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${
-            isModalOpen
-              ? "top-[50%] visible opacity-100"
-              : "top-[40%] invisible opacity-0"
-          } transition duration-500`}
+          className={`w-[90%] md:w-[65%] lg:w-2/5 fixed left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1010] bg-white shadow-lg rounded-lg overflow-hidden ${isModalOpen
+            ? "top-[50%] visible opacity-100"
+            : "top-[40%] invisible opacity-0"
+            } transition duration-500`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Popup head */}
@@ -358,34 +359,34 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
               <div className="py-4 flex flex-col gap-5">
                 {
                   selectedManager?.autoSubs.map((autoSub, index) => (
-                  <div className="flex justify-center gap-4 relative" key={index}>
-                    <TransferCard 
-                      transfer_photo={autoSub.elementOut.elementData.photo}
-                      transfer_point={autoSub.elementOut.elementGWdata.total_points.toString()}
-                      transfer_first_name={autoSub.elementOut.elementData.first_name}
-                      transfer_second_name={autoSub.elementOut.elementData.second_name}
-                      team_code={autoSub.elementOut.elementData.team_code}
-                    />
-                    <TransferCard 
-                      transfer_photo={autoSub.elementIn.elementData.photo}
-                      transfer_point={autoSub.elementIn.elementGWdata.total_points.toString()}
-                      transfer_first_name={autoSub.elementIn.elementData.first_name}
-                      transfer_second_name={autoSub.elementIn.elementData.second_name}
-                      team_code={autoSub.elementIn.elementData.team_code}
-                    />
-                    <div className="w-8 h-8 rounded-full bg-primary-gradient text-[#474747] text-lg flex justify-center items-center absolute top-20">
-                      <Image
-                        src="/transfer.png"
-                        alt="TransferIcon"
-                        width={16}
-                        height={16}
-                        style={{
-                          maxWidth: "100%",
-                          height: "auto",
-                        }}
+                    <div className="flex justify-center gap-4 relative" key={index}>
+                      <TransferCard
+                        transfer_photo={autoSub.elementOut.elementData.photo}
+                        transfer_point={autoSub.elementOut.elementGWdata.total_points.toString()}
+                        transfer_first_name={autoSub.elementOut.elementData.first_name}
+                        transfer_second_name={autoSub.elementOut.elementData.second_name}
+                        team_code={autoSub.elementOut.elementData.team_code}
                       />
+                      <TransferCard
+                        transfer_photo={autoSub.elementIn.elementData.photo}
+                        transfer_point={autoSub.elementIn.elementGWdata.total_points.toString()}
+                        transfer_first_name={autoSub.elementIn.elementData.first_name}
+                        transfer_second_name={autoSub.elementIn.elementData.second_name}
+                        team_code={autoSub.elementIn.elementData.team_code}
+                      />
+                      <div className="w-8 h-8 rounded-full bg-primary-gradient text-[#474747] text-lg flex justify-center items-center absolute top-20">
+                        <Image
+                          src="/transfer.png"
+                          alt="TransferIcon"
+                          width={16}
+                          height={16}
+                          style={{
+                            maxWidth: "100%",
+                            height: "auto",
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
                   ))
                 }
               </div>
@@ -401,15 +402,15 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
               <div className="py-4 flex flex-col gap-5">
                 {
                   selectedManager?.pointsOnBench.map((pointOnBench, index) => (
-                  <div className="flex justify-center gap-4" key={index}>
-                    <TransferCard 
-                      transfer_photo={pointOnBench.elementData.photo}
-                      transfer_point={pointOnBench.elementGWdata.total_points.toString()}
-                      transfer_first_name={pointOnBench.elementData.first_name}
-                      transfer_second_name={pointOnBench.elementData.second_name}
-                      team_code={pointOnBench.elementData.team_code}
-                    />
-                  </div>
+                    <div className="flex justify-center gap-4" key={index}>
+                      <TransferCard
+                        transfer_photo={pointOnBench.elementData.photo}
+                        transfer_point={pointOnBench.elementGWdata.total_points.toString()}
+                        transfer_first_name={pointOnBench.elementData.first_name}
+                        transfer_second_name={pointOnBench.elementData.second_name}
+                        team_code={pointOnBench.elementData.team_code}
+                      />
+                    </div>
                   ))
                 }
               </div>
