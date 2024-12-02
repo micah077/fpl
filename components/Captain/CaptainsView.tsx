@@ -6,8 +6,6 @@ import Popup from "../Modals/Popup";
 import PlayerDetail from "../Common/PlayerDetail";
 import { FPLHistory } from "@/lib/types/FPLPlayerHistory";
 import { Element } from "@/lib/types/FPLStatic";
-import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
-import 'react-horizontal-scrolling-menu/dist/styles.css';
 
 type captainPicksType = {
   playerId: number;
