@@ -125,7 +125,7 @@ const TransferInOut = ({
                   </td>
                   <td className="px-4 py-2">{details.users.length}</td>
                   <td className="px-4 py-2">
-                    <div className="group w-fit flex justify-center items-center"
+                    <div className="relative group w-fit flex justify-center items-center"
                       onMouseEnter={() => {
                         setShowInfo(index);
                       }}
@@ -139,7 +139,7 @@ const TransferInOut = ({
                       />
 
                       <ul
-                        className={`group-hover:inline hidden bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute right-12 z-10  ${showInfo === 4 ? "bottom-2" : "top-2"}`}
+                        className={`group-hover:inline hidden min-w-[100px] bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute right-6 z-10  ${showInfo === 4 ? "bottom-2" : "top-2"}`}
                       >
                         {details.users.map((user, idx) => (
                           <li key={idx}>{user}</li>
@@ -246,13 +246,13 @@ const TransferInOut = ({
                     </td>
                     <td className="px-4 py-2">{details.users.length}</td>
                     <td className="px-4 py-2">
-                      <div className="group w-fit flex justify-center items-center">
+                      <div className="relative group w-fit flex justify-center items-center">
                         <MdInfoOutline
                           className="text-lg group text-icon-green cursor-pointer"
                         />
 
                         <ul
-                          className={`group-hover:inline hidden bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute top-5 right-10 md:right-20 z-10 `}
+                          className={`group-hover:inline min-w-[150px] hidden bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute top-5 right-6  z-10 `}
                         >
                           {details.users.map((user, idx) => (
                             <li key={idx}>{user}</li>
