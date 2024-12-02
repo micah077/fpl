@@ -6,6 +6,8 @@ import Popup from "../Modals/Popup";
 import PlayerDetail from "../Common/PlayerDetail";
 import { FPLHistory } from "@/lib/types/FPLPlayerHistory";
 import { Element } from "@/lib/types/FPLStatic";
+import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
+import 'react-horizontal-scrolling-menu/dist/styles.css';
 
 type captainPicksType = {
   playerId: number;
@@ -46,7 +48,7 @@ const CaptainsView = ({ leagueId }: { leagueId: string }) => {
     document.body.style.overflow = "auto";
   }; // Function to close the modal
 
-  const handleInfoClick = (id: number, playerElement: Element, ownedUsers: FPLResult[], gw:number ) => {
+  const handleInfoClick = (id: number, playerElement: Element, ownedUsers: FPLResult[], gw: number) => {
     setplayerElement(playerElement);
     setOwnedManagers(ownedUsers);
     setGw(gw);
@@ -55,10 +57,10 @@ const CaptainsView = ({ leagueId }: { leagueId: string }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      
+
       const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
       const NEXT_API_BASE_URL = `${BASE_URL}/api/fetch`;
-  
+
       try {
         if (captainPicks.length === 0) {
           setLoading(true); // Start loading state
@@ -67,22 +69,22 @@ const CaptainsView = ({ leagueId }: { leagueId: string }) => {
             throw new Error(`Error: ${res.status}`);
           }
           const data: captainPicksType[] = await res.json();
-          
+
           setCaptainPicks(data); // Set fetched data
         }
       } catch (error) {
         console.error("Error fetching captain picks:", error);
       } finally {
-        
+
         setLoading(false); // End loading state
       }
     };
-  
+
     if (leagueId) {
       fetchData(); // Fetch data only if leagueId exists
     }
   }, [leagueId]);
-  
+
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isDragging && captainContainerRef.current) {
@@ -115,28 +117,26 @@ const CaptainsView = ({ leagueId }: { leagueId: string }) => {
     <div className="max-w-full overflow-x-hidden">
       <h2 className="text-xl text-white font-bold mb-1">Top Captain</h2>
       <div
-        className="flex gap-5 py-3 overflow-x-hidden"
+        className="flex gap-5 py-3 overflow-x-auto"
         ref={captainContainerRef}
-        onMouseDown={() => setIsDragging(true)}
-        onMouseMove={handleMouseMove}
-        onMouseUp={() => setIsDragging(false)}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={() => setIsDragging(false)}
+
       >
-        {captainPicks.map((captainPick, index) => (
-          <CaptainCard
-            key={index}
-            captainPick={captainPick}
-            infoClick={handleInfoClick}
-          />
-        ))}
+     
+
+          {captainPicks.map((captainPick, index) => (
+            <CaptainCard
+              key={index}
+              captainPick={captainPick}
+              infoClick={handleInfoClick}
+            />
+          ))}
+
       </div>
 
       {/* Modal Component */}
       <Popup isOpen={isModalOpen} onClose={closeModal}>
         {/* Popup */}
-        <PlayerDetail isOpen={isModalOpen} onClose={closeModal} playerData={playerElement as Element} ownedUsers={ownedManagers} gw={gw}  />
+        <PlayerDetail isOpen={isModalOpen} onClose={closeModal} playerData={playerElement as Element} ownedUsers={ownedManagers} gw={gw} />
         {/* Popup */}
       </Popup>
       {/* Modal Component */}

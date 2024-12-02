@@ -62,3 +62,6 @@
   .animation-container {
     transform: translate3d(0, 0, 0); /* Triggers hardware acceleration */
   }
+  ::-webkit-scrollbar {
+   display: none;
+  }

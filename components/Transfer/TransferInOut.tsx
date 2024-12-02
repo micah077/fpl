@@ -120,34 +120,31 @@ const TransferInOut = ({
                           height: "auto",
                         }}
                       />
-                      <span className="text-left">{player}</span>
+                      <p className="text-left">{player}</p>
                     </div>
                   </td>
                   <td className="px-4 py-2">{details.users.length}</td>
                   <td className="px-4 py-2">
-                    <div className="flex justify-center items-center">
+                    <div className="group w-fit flex justify-center items-center"
+                      onMouseEnter={() => {
+                        setShowInfo(index);
+                      }}
+                      onMouseLeave={() => {
+                        setShowInfo(null)
+                      }}
+                    >
                       <MdInfoOutline
-                        className="text-lg text-icon-green cursor-pointer"
-                        onMouseEnter={() => {
-                          setFromMoreModal(true);
-                          setShowInfo(index);
-                        }}
-                        onMouseLeave={() => {
-                          setShowInfo(null)
-                          setFromMoreModal(false);
+                        className="text-lg  text-icon-green cursor-pointer"
 
-                        }}
                       />
-                      {showInfo === index && isFromMoreModal && (
-                        <ul
-                          className={`bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute ${showInfo === 4 ? "bottom-2" : "top-2"
-                            } right-12 z-[5]`}
-                        >
-                          {details.users.map((user, idx) => (
-                            <li key={idx}>{user}</li>
-                          ))}
-                        </ul>
-                      )}
+
+                      <ul
+                        className={`group-hover:inline hidden bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute right-12 z-10  ${showInfo === 4 ? "bottom-2" : "top-2"}`}
+                      >
+                        {details.users.map((user, idx) => (
+                          <li key={idx}>{user}</li>
+                        ))}
+                      </ul>
                     </div>
                   </td>
                 </tr>
@@ -244,51 +241,35 @@ const TransferInOut = ({
                             height: "auto",
                           }}
                         />
-                        <span className="">{player}</span>
+                        <p className="text-left">{player}</p>
                       </div>
                     </td>
                     <td className="px-4 py-2">{details.users.length}</td>
                     <td className="px-4 py-2">
-                      <div
-
-                        className="flex justify-center items-center">
-                        <div
-
-                          onMouseEnter={() => {
-                            setFromMoreModal2(true);
-                            setShowInfo2(index);
-                          }}
-                          onMouseLeave={() => {
-                            setShowInfo2(null)
-                          }}
-                          className="flex justify-center items-center cursor-pointer">
+                      <div className="group w-fit flex justify-center items-center">
                         <MdInfoOutline
-                          className="text-lg text-icon-green cursor-pointer"
-
+                          className="text-lg group text-icon-green cursor-pointer"
                         />
-                        {showInfo2 === index && isFromMoreModal2 ? (
-                          <ul
-                            className={`bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute ${showInfo === 4 ? "bottom-2" : "top-2"
-                              } right-16 z-[5]`}
-                          >
-                            {details.users.map((user, idx) => (
-                              <li key={idx}>{user}</li>
-                            ))}
-                          </ul>
-                        ) : null}
+
+                        <ul
+                          className={`group-hover:inline hidden bg-secondary-green text-off-white text-[10px] text-start p-3 rounded-md space-y-1 absolute top-5 right-10 md:right-20 z-10 `}
+                        >
+                          {details.users.map((user, idx) => (
+                            <li key={idx}>{user}</li>
+                          ))}
+                        </ul>
                       </div>
-                    </div>
-                  </td>
+                    </td>
                   </tr>
                 ))}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
+          {/* Popup content */}
         </div>
-        {/* Popup content */}
-    </div>
-        {/* Popup */ }
+        {/* Popup */}
       </Popup >
-  {/* Modal Component */ }
+      {/* Modal Component */}
     </div >
   );
 };
