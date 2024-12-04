@@ -103,6 +103,7 @@ const TransferStats = ({ leagueId }: { leagueId: string }) => {
         x={offsetX}
         y={offsetY}
         angle={angleC}
+        onClick={() => handleBarClick(transfersData[index])}
         textAnchor={value >= 0 ? "start" : "end"}
         fill="#606060"
         style={{ fontSize: "12px", fontWeight: "500" }}
@@ -265,7 +266,7 @@ const TransferStats = ({ leagueId }: { leagueId: string }) => {
                 radius={[10, 10, 0, 0]}
                 isAnimationActive={true}
                 animationDuration={500}
-                onClick={handleBarClick}
+                onClick={(e) => handleBarClick(e)}
                 onMouseLeave={handleMouseOut}
               >
                 {transfersData.map((entry, index) => (
