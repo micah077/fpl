@@ -65,7 +65,7 @@ const TeamValue = ({ leagueId }: { leagueId: string }) => {
 
 
   return (
-    <div className="col-span-2">
+    <div className="col-span-3 md:col-span-2">
       <MainCard  error={error} loader={isLoading} onRefresh={()=>fetchData()} title={`Team Value`}>
         <div className="overflow-auto">
           <table className="w-full">
