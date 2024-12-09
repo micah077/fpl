@@ -93,13 +93,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             );
 
             const playersStarted = userGWEvents.filter(event => {
+                console.log(event, 'event');
+
+                // Check if `event.explain` exists and is an array with at least one element
+                if (!event.explain || event.explain.length === 0) {
+                    return false; // Skip this event if there's no valid explain data
+                }
+
+                // Safely access the first element of event.explain
+                const explainData = event.explain[0];
+
+                // Find the user's picks for the event
                 const userGWDataStarting = userGWdata.picks.filter(pick =>
                     pick?.element === event.id && pick.position <= 11
                 );
 
-                const minutes = event.explain[0].stats.find(stat => stat.identifier === 'minutes');
-                const fixtureStarted = gwBonusPoints.find(bonusPoint => bonusPoint?.fixtureId === event.explain[0].fixture);
+                // Check if stats and minutes exist before trying to access the value
+                const minutes = explainData.stats?.find(stat => stat.identifier === 'minutes');
 
+                // Find the fixture associated with the event
+                const fixtureStarted = gwBonusPoints.find(bonusPoint => bonusPoint?.fixtureId === explainData.fixture);
+
+                // Ensure all the conditions are met and return the result
                 return userGWDataStarting.length > 0 && fixtureStarted && minutes?.value !== 0;
             });
 
