@@ -129,8 +129,8 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
       const graphData = data.map((item) => {
         return {
           name: item.player_name,
-          points_on_bench: item.pointsOnBench.reduce((acc, curr) => acc + curr.elementGWdata.total_points, 0),
-          auto_sub: item.autoSubs.reduce((acc, curr) => acc + curr.elementIn.elementGWdata.total_points, 0),
+          points_on_bench: item.pointsOnBench.reduce((acc, curr) => acc + curr.elementGWdata?.total_points, 0),
+          auto_sub: item.autoSubs.reduce((acc, curr) => acc + curr.elementIn.elementGWdata?.total_points, 0),
           manager_id: item.userId
         };
       });

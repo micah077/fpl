@@ -112,8 +112,9 @@ export async function getTransfersFromListOfIds(userIds: string[] | number[]): P
  * @param {number | string} gw - The gameweek number.
  * @returns {Promise<History>} The player's gameweek data.
  */
-export async function getPlayerGWDataByPlayerId(id: number | string, gw: number | string): Promise<FPLHistory> {
+export async function getPlayerGWDataByPlayerId(id: number | string, gw: number | string): Promise<FPLHistory | null> {
   try {
+    console.log(id,'id')
     const res = await fetch(`${FPL_BASE_URL}/element-summary/${id}/`, {
       next: { revalidate: REVALIDATION },
     });
@@ -124,10 +125,13 @@ export async function getPlayerGWDataByPlayerId(id: number | string, gw: number 
     }
 
     const data = (await res.json()) as FPLPlayerHistory;
+
     const gameweekData = data.history.find(data => data.round == Number(gw) && data.element == id);
-    
+
     if (!gameweekData) {
-      throw new Error(`Gameweek data not found for player ID ${id} and gameweek ${gw}`);
+      console.log(`Gameweek data not found for player ID ${id} and gameweek ${gw}`)
+      return null; 
+      // throw new Error(`Gameweek data not found for player ID ${id} and gameweek ${gw}`);
     }
 
     return gameweekData;
@@ -170,7 +174,7 @@ export function getImageLink(imgId?: string): string {
 
   if (!imgId) {
     return '/player-loading.svg';
-  } 
+  }
   const imgPrefix = imgId?.slice(0, -3);
   const fullImgUrl = `${FPL_IMG_BASE_URL}${imgPrefix}png`;
   return fullImgUrl;
