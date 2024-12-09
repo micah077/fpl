@@ -129,6 +129,7 @@ export async function getPlayerGWDataByPlayerId(id: number | string, gw: number 
     const gameweekData = data.history.find(data => data.round == Number(gw) && data.element == id);
 
     if (!gameweekData) {
+      console.log(gameweekData,'gameweekData')
       console.log(`Gameweek data not found for player ID ${id} and gameweek ${gw}`)
       return null; 
       // throw new Error(`Gameweek data not found for player ID ${id} and gameweek ${gw}`);
