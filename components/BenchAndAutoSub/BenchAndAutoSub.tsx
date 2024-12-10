@@ -362,14 +362,14 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
                     <div className="flex justify-center gap-4 relative" key={index}>
                       <TransferCard
                         transfer_photo={autoSub.elementOut.elementData.photo}
-                        transfer_point={autoSub.elementOut.elementGWdata.total_points.toString()}
+                        transfer_point={autoSub.elementOut.elementGWdata?.total_points.toString()}
                         transfer_first_name={autoSub.elementOut.elementData.first_name}
                         transfer_second_name={autoSub.elementOut.elementData.second_name}
                         team_code={autoSub.elementOut.elementData.team_code}
                       />
                       <TransferCard
                         transfer_photo={autoSub.elementIn.elementData.photo}
-                        transfer_point={autoSub.elementIn.elementGWdata.total_points.toString()}
+                        transfer_point={autoSub.elementIn.elementGWdata?.total_points.toString()}
                         transfer_first_name={autoSub.elementIn.elementData.first_name}
                         transfer_second_name={autoSub.elementIn.elementData.second_name}
                         team_code={autoSub.elementIn.elementData.team_code}
@@ -405,7 +405,7 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
                     <div className="flex justify-center gap-4" key={index}>
                       <TransferCard
                         transfer_photo={pointOnBench.elementData.photo}
-                        transfer_point={pointOnBench.elementGWdata.total_points.toString()}
+                        transfer_point={pointOnBench.elementGWdata?.total_points.toString()}
                         transfer_first_name={pointOnBench.elementData.first_name}
                         transfer_second_name={pointOnBench.elementData.second_name}
                         team_code={pointOnBench.elementData.team_code}
