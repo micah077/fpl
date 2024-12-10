@@ -86,7 +86,7 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
         <div className="bg-light-black text-off-white text-sm p-4 rounded-md">
           <p className="mb-1">{payload[0]?.payload?.name}</p>
           <p className="text-xs capitalize text-[#20FECD]">
-            Points on Bench: <span>{payload[0].value}</span>
+            Points on Bench: <span>{Number.isNaN(payload[0].value) ? 0 : payload[0].value}</span>
           </p>
           <p className="text-xs capitalize text-[#FFC107]">
             Autosub points: <span>{payload[1]?.value}</span>
@@ -396,7 +396,7 @@ const BenchAndAutoSub = ({ leagueId }: { leagueId: string }) => {
                 Point of the bench
               </h2>
               <div className="w-full p-4 bg-third-gradient bg-no-repeat bg-right rounded-md shadow-md flex flex-col justify-center items-center">
-                <h2 className="text-[#4F4F4F] text-lg font-bold">{selectedPoB}</h2>
+                <h2 className="text-[#4F4F4F] text-lg font-bold">{Number.isNaN(selectedPoB) ? 0 : selectedPoB}</h2>
                 <p className="text-secondary-gray text-xs">Points</p>
               </div>
               <div className="py-4 flex flex-col gap-5">
