@@ -96,6 +96,7 @@ const LeagueTable = ({ leagueId }: { leagueId: string }) => {
         const data: LeagueTableData = await res.json();
         setLeagueTableData(data);
       } else {
+        fetchData()
         console.error("API error:");
         setIsError(true);
       }

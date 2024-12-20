@@ -52,7 +52,8 @@ const MostOwnedPlayer = ({ leagueId, isDiff }: { leagueId: string, isDiff: boole
       setError(false)
       const res = await fetch(`${NEXT_API_BASE_URL}/getMostOwnedPlayer/${leagueId}`);
       if (!res.ok) {
-        throw new Error(`Error fetching most owned player: ${res.statusText}`);
+        fetchData()
+        
       }
       const data: MostOwnedPlayerType = await res.json();
       setMostOwnedPlayers(data); // Update state with fetched data

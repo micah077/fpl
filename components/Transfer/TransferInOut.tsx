@@ -62,7 +62,8 @@ const TransferInOut = ({
       setError(false);
       const res = await fetch(`${NEXT_API_BASE_URL}/getTransferInOut/${inOut}/${leagueId}`);
       if (!res.ok) {
-        throw new Error(`Error fetching transfer data: ${res.statusText}`);
+        fetchData()
+        
       }
       const data: UserTransfer = await res.json();
       setTransfers(data);

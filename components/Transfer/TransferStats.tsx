@@ -186,7 +186,8 @@ const TransferStats = ({ leagueId }: { leagueId: string }) => {
     try {
       const res = await fetch(`${NEXT_API_BASE_URL}/getTransferStats/${leagueId}`);
       if (!res.ok) {
-        throw new Error(`Error fetching transfer stats: ${res.statusText}`);
+        fetchData()
+        
       }
       const data: UserTransfers = await res.json();
 

@@ -64,7 +64,8 @@ const CaptainsView = ({ leagueId }: { leagueId: string }) => {
           setLoading(true); // Start loading state
           const res = await fetch(`${NEXT_API_BASE_URL}/getCaptainView/${leagueId}`);
           if (!res.ok) {
-            throw new Error(`Error: ${res.status}`);
+            fetchData()
+            
           }
           const data: captainPicksType[] = await res.json();
 
